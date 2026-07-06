@@ -39,7 +39,7 @@ except ImportError:
     print("⚠️  markdown no instalado. Usando conversión básica.  pip install markdown")
 
 # ── Rutas base ───────────────────────────────────────────────────────────────
-REPO_ROOT   = Path(__file__).resolve().parent.parent   # drz.github.com/
+REPO_ROOT   = Path(__file__).resolve().parent.parent   # drz.github.io/
 PAGES_DIR   = REPO_ROOT / "pages"
 TEMPLATE_MD = PAGES_DIR / "template" / "curso.md"
 COURSES_JSON= PAGES_DIR / "courses.json"

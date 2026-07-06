@@ -4,7 +4,7 @@ PORT ?= 8000
 HOST ?= 127.0.0.1
 
 help:
-	@echo "Servidor local para probar drz.github.com"
+	@echo "Servidor local para probar drz.github.io"
 	@echo ""
 	@echo "  make start   - Arranca http://$(HOST):$(PORT) en segundo plano"
 	@echo "  make stop    - Detiene el servidor en el puerto $(PORT)"
