@@ -38,6 +38,7 @@ inscripcion_url: "https://drz.academy"
 
 # Imágenes (rutas relativas desde pages/<id>/)
 imagen_header: "images/header.png"
+imagen_og: "images/og-preview.jpg"           # banner para WhatsApp/redes (generado)
 imagen_qr_curso: "images/qr-curso.png"         # afiche → hoja del curso (generado)
 imagen_qr: "images/qr-inscripcion.png"         # página → inscripción (generado)
 

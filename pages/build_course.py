@@ -55,6 +55,9 @@ TEMPLATE_DIR= PAGES_DIR / "template"
 SITE_URL    = "https://drz-academy.github.io"
 QR_CURSO    = "images/qr-curso.png"          # afiche → hoja del curso
 QR_INSCRIPCION = "images/qr-inscripcion.png"  # página → URL de inscripción
+OG_PREVIEW  = "images/og-preview.jpg"         # banner optimizado para redes sociales
+OG_MAX_WIDTH = 1200
+OG_MAX_BYTES = 300_000
 INSCRIPCION_PLACEHOLDERS = {"", "#", "https://drz.academy"}
 LOGO_QR     = REPO_ROOT / "assets/DrZ-Logos/Dr_Z_Logo_Blanco_marquesina_fondo_transparente.png"
 QR_SIZE     = 512
@@ -248,6 +251,35 @@ def generate_qrs(meta: dict, course_dir: Path) -> None:
     print(f"✅  QR inscripción  →  {dest_insc.relative_to(REPO_ROOT)}  ({inscripcion})")
 
 
+def generate_og_preview(course_dir: Path, header_rel: str) -> tuple[int, int] | None:
+    """Genera JPEG liviano del banner para WhatsApp, Twitter, etc. (≤300 KB)."""
+    if not HAS_QRCODE:
+        return None
+
+    header_path = course_dir / header_rel
+    if not header_path.exists():
+        print(f"⚠️  Banner no encontrado: {header_path.relative_to(REPO_ROOT)}")
+        return None
+
+    dest = course_dir / OG_PREVIEW
+    img = Image.open(header_path).convert("RGB")
+    w, h = img.size
+    if w > OG_MAX_WIDTH:
+        h = int(h * OG_MAX_WIDTH / w)
+        w = OG_MAX_WIDTH
+        img = img.resize((w, h), Image.LANCZOS)
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    for quality in (85, 75, 65, 55, 45):
+        img.save(dest, "JPEG", quality=quality, optimize=True)
+        if dest.stat().st_size <= OG_MAX_BYTES:
+            break
+
+    kb = dest.stat().st_size // 1024
+    print(f"✅  OG preview  →  {dest.relative_to(REPO_ROOT)}  ({w}×{h}, {kb} KB)")
+    return w, h
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # PLANTILLA HTML
 # ─────────────────────────────────────────────────────────────────────────────
@@ -297,10 +329,25 @@ def absolute_asset(path: str, course_id: str) -> str:
     return f"{SITE_URL}/pages/{course_id}/{path.lstrip('/')}"
 
 
-def head_meta(meta: dict, *, page_url: str, og_image: str, og_type: str = "website") -> str:
+def head_meta(
+    meta: dict,
+    *,
+    page_url: str,
+    og_image: str,
+    og_width: int | None = None,
+    og_height: int | None = None,
+    og_type: str = "website",
+) -> str:
     titulo = meta.get("titulo", "Dr. Z Academy")
     tagline = meta.get("tagline", meta.get("descripcion", ""))
     full_title = f"{titulo} – Dr. Z Academy"
+
+    og_dims = ""
+    if og_width and og_height:
+        og_dims = f"""
+  <meta property="og:image:width" content="{og_width}">
+  <meta property="og:image:height" content="{og_height}">
+  <meta property="og:image:type" content="image/jpeg">"""
 
     return f"""  <title>{escape_attr(full_title)}</title>
   <meta name="description" content="{escape_attr(tagline)}">
@@ -314,7 +361,7 @@ def head_meta(meta: dict, *, page_url: str, og_image: str, og_type: str = "websi
   <meta property="og:title" content="{escape_attr(full_title)}">
   <meta property="og:description" content="{escape_attr(tagline)}">
   <meta property="og:url" content="{page_url}">
-  <meta property="og:image" content="{og_image}">
+  <meta property="og:image" content="{og_image}">{og_dims}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{escape_attr(full_title)}">
   <meta name="twitter:description" content="{escape_attr(tagline)}">
@@ -331,8 +378,14 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
     activo      = meta.get("activo", False)
     course_id   = meta.get("id", "curso")
     page_url    = f"{SITE_URL}/pages/{course_id}/"
-    og_image    = absolute_asset(header_img, course_id)
-    meta_tags   = head_meta(meta, page_url=page_url, og_image=og_image)
+    og_rel      = meta.get("imagen_og", OG_PREVIEW)
+    og_image    = absolute_asset(og_rel, course_id)
+    og_width    = meta.get("_og_width")
+    og_height   = meta.get("_og_height")
+    meta_tags   = head_meta(
+        meta, page_url=page_url, og_image=og_image,
+        og_width=og_width, og_height=og_height,
+    )
 
     # Construir el cuerpo de secciones
     body_html_parts: list[str] = []
@@ -621,6 +674,12 @@ def cmd_build(md_path: Path, update_json: bool = True, generate_qr_code: bool = 
 
     if generate_qr_code:
         generate_qrs(meta, md_path.parent)
+
+    og_dims = generate_og_preview(
+        md_path.parent, meta.get("imagen_header", "images/header.png")
+    )
+    if og_dims:
+        meta["_og_width"], meta["_og_height"] = og_dims
 
     sections  = split_sections(body)
     html      = render_html(meta, sections)
