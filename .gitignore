@@ -1,0 +1,16 @@
+# Reference/contrib files – not for version control
+contrib/
+pages/contrib/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
