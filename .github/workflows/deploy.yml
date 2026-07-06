@@ -29,7 +29,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install Python deps
-        run: pip install pyyaml markdown
+        run: pip install -r requirements.txt
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -54,6 +54,7 @@ jobs:
         run: |
           shopt -s nullglob
           for md in pages/*/curso.md; do
+            [ "$md" = "pages/template/curso.md" ] && continue
             echo "▶  Building: $md"
             python3 pages/build_course.py "$md" --no-update-json
           done
@@ -65,6 +66,9 @@ jobs:
 
           # Archivo raíz
           cp index.html _site/
+
+          # Logo, favicon y assets compartidos
+          cp -r assets _site/assets
 
           # Evita que GitHub intente procesar con Jekyll
           touch _site/.nojekyll

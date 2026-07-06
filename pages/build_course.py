@@ -14,12 +14,13 @@ Uso:
     python3 pages/build_course.py pages/mi-curso/curso.md --no-update-json
 
 Dependencias:
-    pip install pyyaml markdown
+    pip install -r requirements.txt
 """
 
 import re
 import sys
 import json
+import html
 import shutil
 import argparse
 from pathlib import Path
@@ -28,7 +29,7 @@ from pathlib import Path
 try:
     import yaml
 except ImportError:
-    sys.exit("❌  Falta pyyaml.  Instala con:  pip install pyyaml")
+    sys.exit("❌  Falta pyyaml.  Instala con:  pip install -r requirements.txt")
 
 try:
     import markdown as md_lib
@@ -36,13 +37,28 @@ try:
     HAS_MARKDOWN = True
 except ImportError:
     HAS_MARKDOWN = False
-    print("⚠️  markdown no instalado. Usando conversión básica.  pip install markdown")
+    print("⚠️  markdown no instalado. Usando conversión básica.  pip install -r requirements.txt")
+
+try:
+    import qrcode
+    from PIL import Image
+    HAS_QRCODE = True
+except ImportError:
+    HAS_QRCODE = False
 
 # ── Rutas base ───────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).resolve().parent.parent   # drz-academy.github.io/
 PAGES_DIR   = REPO_ROOT / "pages"
 TEMPLATE_MD = PAGES_DIR / "template" / "curso.md"
 COURSES_JSON= PAGES_DIR / "courses.json"
+TEMPLATE_DIR= PAGES_DIR / "template"
+SITE_URL    = "https://drz-academy.github.io"
+QR_CURSO    = "images/qr-curso.png"          # afiche → hoja del curso
+QR_INSCRIPCION = "images/qr-inscripcion.png"  # página → URL de inscripción
+INSCRIPCION_PLACEHOLDERS = {"", "#", "https://drz.academy"}
+LOGO_QR     = REPO_ROOT / "assets/DrZ-Logos/Dr_Z_Logo_Blanco_marquesina_fondo_transparente.png"
+QR_SIZE     = 512
+LOGO_RATIO  = 0.28
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -147,6 +163,92 @@ def render_section_content(content: str, fotos: list[str]) -> str:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CÓDIGO QR
+# ─────────────────────────────────────────────────────────────────────────────
+
+def course_page_url(course_id: str) -> str:
+    return f"{SITE_URL}/pages/{course_id}/"
+
+
+def load_qr_logo() -> Image.Image:
+    """Recorta márgenes transparentes para que el logo llene el espacio central."""
+    logo = Image.open(LOGO_QR).convert("RGBA")
+    bbox = logo.split()[3].getbbox()
+    if bbox:
+        logo = logo.crop(bbox)
+    return logo
+
+
+def embed_logo_on_qr(qr_img: Image.Image) -> Image.Image:
+    """Superpone el logo de Dr. Z en el centro del QR (fondo blanco de respaldo)."""
+    qr = qr_img.convert("RGBA")
+    logo = load_qr_logo()
+
+    qr_w, _ = qr.size
+    logo_size = int(qr_w * LOGO_RATIO)
+    logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
+
+    pad = int(logo_size * 0.12)
+    bg_size = logo_size + pad * 2
+    bg = Image.new("RGBA", (bg_size, bg_size), (255, 255, 255, 255))
+
+    lx = (qr_w - bg_size) // 2
+    ly = (qr_w - bg_size) // 2
+    qr.paste(bg, (lx, ly), bg)
+    qr.paste(logo, (lx + pad, ly + pad), logo)
+    return qr.convert("RGB")
+
+
+def make_qr_image(url: str, *, embed_logo: bool = False) -> Image.Image:
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=12,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
+    img = img.resize((QR_SIZE, QR_SIZE), Image.NEAREST)
+    if embed_logo:
+        if LOGO_QR.exists():
+            img = embed_logo_on_qr(img)
+        else:
+            print(f"⚠️  Logo QR no encontrado: {LOGO_QR.relative_to(REPO_ROOT)}")
+    return img
+
+
+def generate_qrs(meta: dict, course_dir: Path) -> None:
+    """Genera los dos QR: afiche (hoja del curso) e inscripción."""
+    if not HAS_QRCODE:
+        print("⚠️  qrcode no instalado.  pip install -r requirements.txt")
+        return
+
+    course_id = meta.get("id", course_dir.name)
+    course_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. QR para afiche → página de información del curso (con logo)
+    rel_curso = meta.get("imagen_qr_curso") or QR_CURSO
+    dest_curso = course_dir / rel_curso
+    url_curso = course_page_url(course_id)
+    dest_curso.parent.mkdir(parents=True, exist_ok=True)
+    make_qr_image(url_curso, embed_logo=True).save(dest_curso)
+    print(f"✅  QR curso (afiche)  →  {dest_curso.relative_to(REPO_ROOT)}  ({url_curso})")
+
+    # 2. QR para la página → URL de inscripción (con logo)
+    inscripcion = str(meta.get("inscripcion_url", "")).strip()
+    if inscripcion in INSCRIPCION_PLACEHOLDERS:
+        print("⚠️  QR inscripción omitido: define inscripcion_url en curso.md")
+        return
+
+    rel_insc = meta.get("imagen_qr") or QR_INSCRIPCION
+    dest_insc = course_dir / rel_insc
+    dest_insc.parent.mkdir(parents=True, exist_ok=True)
+    make_qr_image(inscripcion, embed_logo=True).save(dest_insc)
+    print(f"✅  QR inscripción  →  {dest_insc.relative_to(REPO_ROOT)}  ({inscripcion})")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # PLANTILLA HTML
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -184,6 +286,41 @@ def cta_block(meta: dict) -> str:
     <p class="closing">¡Nos vemos!</p>'''
 
 
+def escape_attr(text: str) -> str:
+    return html.escape(str(text or ""), quote=True)
+
+
+def absolute_asset(path: str, course_id: str) -> str:
+    """Convierte una ruta relativa de imagen del curso en URL absoluta."""
+    if path.startswith("http"):
+        return path
+    return f"{SITE_URL}/pages/{course_id}/{path.lstrip('/')}"
+
+
+def head_meta(meta: dict, *, page_url: str, og_image: str, og_type: str = "website") -> str:
+    titulo = meta.get("titulo", "Dr. Z Academy")
+    tagline = meta.get("tagline", meta.get("descripcion", ""))
+    full_title = f"{titulo} – Dr. Z Academy"
+
+    return f"""  <title>{escape_attr(full_title)}</title>
+  <meta name="description" content="{escape_attr(tagline)}">
+  <link rel="icon" href="{SITE_URL}/assets/favicon.ico" sizes="any">
+  <link rel="icon" href="{SITE_URL}/assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="{SITE_URL}/assets/favicon-16.png" type="image/png" sizes="16x16">
+  <link rel="apple-touch-icon" href="{SITE_URL}/assets/apple-touch-icon.png">
+  <meta property="og:type" content="{og_type}">
+  <meta property="og:site_name" content="Dr. Z Academy">
+  <meta property="og:locale" content="es_CO">
+  <meta property="og:title" content="{escape_attr(full_title)}">
+  <meta property="og:description" content="{escape_attr(tagline)}">
+  <meta property="og:url" content="{page_url}">
+  <meta property="og:image" content="{og_image}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{escape_attr(full_title)}">
+  <meta name="twitter:description" content="{escape_attr(tagline)}">
+  <meta name="twitter:image" content="{og_image}">"""
+
+
 def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
     """Genera la página HTML completa a partir de los metadatos y secciones."""
     titulo      = meta.get("titulo", "Curso Dr. Z Academy")
@@ -192,6 +329,10 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
     header_img  = meta.get("imagen_header", "images/header.png")
     fotos       = meta.get("fotos", [])
     activo      = meta.get("activo", False)
+    course_id   = meta.get("id", "curso")
+    page_url    = f"{SITE_URL}/pages/{course_id}/"
+    og_image    = absolute_asset(header_img, course_id)
+    meta_tags   = head_meta(meta, page_url=page_url, og_image=og_image)
 
     # Construir el cuerpo de secciones
     body_html_parts: list[str] = []
@@ -220,9 +361,7 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{titulo} – Dr. Z Academy</title>
-  <meta name="description" content="{tagline}">
-  <link rel="icon" href="https://drz.academy/wp-content/uploads/2024/11/Dr_Z_Logo_Logo_fondo_sin_fondo-150x150.png" sizes="32x32">
+{meta_tags}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -452,23 +591,36 @@ def cmd_new(course_id: str) -> None:
     text = re.sub(r'^id:\s*"[^"]*"', f'id: "{course_id}"', text, flags=re.MULTILINE)
     dest_md.write_text(text, encoding="utf-8")
 
+    meta, _ = parse_frontmatter(dest_md.read_text(encoding="utf-8"))
+    generate_qrs(meta, dest_dir)
+
     print(f"✅  Nuevo curso creado en:  {dest_dir.relative_to(REPO_ROOT)}/")
     print(f"   1. Edita el frontmatter y el contenido en:  {dest_md.relative_to(REPO_ROOT)}")
     print(f"   2. Copia las imágenes a:  {dest_img.relative_to(REPO_ROOT)}/")
-    print(f"   3. Genera la página con:  python3 pages/build_course.py {dest_md.relative_to(REPO_ROOT)}")
+    print(f"      · header.png (banner, ~2048×952 px)")
+    print(f"      · fotos opcionales para la sección «¿Cómo lo vamos a hacer?»")
+    print(f"   3. Pon la URL real de inscripción en inscripcion_url y vuelve a generar:")
+    print(f"      python3 pages/build_course.py {dest_md.relative_to(REPO_ROOT)}")
 
 
-def cmd_build(md_path: Path, update_json: bool = True) -> None:
+def cmd_build(md_path: Path, update_json: bool = True, generate_qr_code: bool = True) -> None:
     """Genera el index.html del curso a partir del markdown."""
     md_path = md_path.resolve()
     if not md_path.exists():
         sys.exit(f"❌  No se encuentra el archivo:  {md_path}")
+
+    if md_path.parent == TEMPLATE_DIR.resolve():
+        print("⏭️  Omitiendo plantilla (no es un curso publicable): pages/template/curso.md")
+        return
 
     source    = md_path.read_text(encoding="utf-8")
     meta, body = parse_frontmatter(source)
 
     if not meta.get("id"):
         meta["id"] = md_path.parent.name
+
+    if generate_qr_code:
+        generate_qrs(meta, md_path.parent)
 
     sections  = split_sections(body)
     html      = render_html(meta, sections)
@@ -508,12 +660,20 @@ Ejemplos:
         "--no-update-json", action="store_true",
         help="No actualizar pages/courses.json",
     )
+    parser.add_argument(
+        "--no-qr", action="store_true",
+        help="No regenerar el código QR de inscripción",
+    )
     args = parser.parse_args()
 
     if args.new:
         cmd_new(args.new)
     elif args.markdown:
-        cmd_build(args.markdown, update_json=not args.no_update_json)
+        cmd_build(
+            args.markdown,
+            update_json=not args.no_update_json,
+            generate_qr_code=not args.no_qr,
+        )
     else:
         parser.print_help()
 

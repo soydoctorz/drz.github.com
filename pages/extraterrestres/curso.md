@@ -14,6 +14,7 @@ tiene_zoom: true
 tiene_classroom: true
 inscripcion_url: "https://tinyurl.com/jzx4jyya"
 imagen_header: "images/header.png"
+imagen_qr_curso: "images/qr-curso.png"
 imagen_qr: "images/qr-inscripcion.png"
 fotos:
   - "images/foto1.jpg"

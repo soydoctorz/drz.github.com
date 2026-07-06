@@ -1,21 +1,57 @@
-.PHONY: help start stop
+.PHONY: help build pages sync-site start stop
 
 PORT ?= 8000
 HOST ?= 127.0.0.1
+SITE  := _site
 
 help:
 	@echo "Servidor local para probar drz-academy.github.io"
 	@echo ""
-	@echo "  make start   - Arranca http://$(HOST):$(PORT) en segundo plano"
-	@echo "  make stop    - Detiene el servidor en el puerto $(PORT)"
+	@echo "  make build      - Construye apps Next.js y ensambla $(SITE)/"
+	@echo "  make pages      - Regenera HTML y QR de todos los cursos"
+	@echo "  make sync-site  - Copia index, assets y pages/ a $(SITE)/"
+	@echo "  make start      - Arranca http://$(HOST):$(PORT) (actualiza cursos si hace falta)"
+	@echo "  make stop       - Detiene el servidor en el puerto $(PORT)"
 	@echo ""
 	@echo "  PORT=3000 make start   - Usar otro puerto"
 
+pages:
+	@echo "▶  Regenerating course pages…"
+	@bash -c 'shopt -s nullglob; for md in pages/*/curso.md; do \
+		[ "$$md" = "pages/template/curso.md" ] && continue; \
+		echo "  $$md"; python3 pages/build_course.py "$$md"; \
+	done'
+
+sync-site:
+	@mkdir -p $(SITE)
+	@cp index.html $(SITE)/
+	@cp -r assets $(SITE)/assets
+	@rm -rf $(SITE)/pages && cp -r pages $(SITE)/pages
+	@touch $(SITE)/.nojekyll
+
+build: pages
+	@echo "▶  Building Cloud Academy…"
+	@cd apps/cloud_academy && npm ci --legacy-peer-deps && npm run build
+	@echo "▶  Building Lighting Black Holes…"
+	@cd apps/lighting-black-holes && npm ci && npm run build
+	@echo "▶  Assembling $(SITE)/…"
+	@rm -rf $(SITE)
+	@mkdir -p $(SITE)/apps
+	@$(MAKE) sync-site
+	@cp -r apps/cloud_academy/out $(SITE)/apps/cloud_academy
+	@cp -r apps/lighting-black-holes/out $(SITE)/apps/lighting-black-holes
+	@echo "✓  Site ready in $(SITE)/"
+
 start:
+	@test -f $(SITE)/apps/cloud_academy/index.html || $(MAKE) build
+	@$(MAKE) pages sync-site
 	@echo "Starting server on http://$(HOST):$(PORT)"
-	@nohup python3 -m http.server "$(PORT)" --bind "$(HOST)" >/dev/null 2>&1 &
+	@cd $(SITE) && nohup python3 -m http.server "$(PORT)" --bind "$(HOST)" >/dev/null 2>&1 &
 	@sleep 0.2
 	@echo "Started. Stop with: make stop"
+	@echo "  Home:  http://$(HOST):$(PORT)/"
+	@echo "  Apps:  http://$(HOST):$(PORT)/apps/cloud_academy/"
+	@echo "         http://$(HOST):$(PORT)/apps/lighting-black-holes/"
 
 stop:
 	@echo "Stopping server on port $(PORT) (best-effort)"

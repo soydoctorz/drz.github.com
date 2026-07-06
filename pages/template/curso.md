@@ -38,7 +38,8 @@ inscripcion_url: "https://drz.academy"
 
 # Imágenes (rutas relativas desde pages/<id>/)
 imagen_header: "images/header.png"
-imagen_qr: "images/qr-inscripcion.png"   # * opcional – omitir si no hay QR
+imagen_qr_curso: "images/qr-curso.png"         # afiche → hoja del curso (generado)
+imagen_qr: "images/qr-inscripcion.png"         # página → inscripción (generado)
 
 # Fotos que aparecen en la sección "¿Cómo lo vamos a hacer?" (opcional)
 # Se insertan donde se coloque el marcador <!-- fotos --> en el cuerpo

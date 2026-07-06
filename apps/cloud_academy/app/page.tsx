@@ -11,7 +11,7 @@ export default function Home() {
         <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
             <Image 
-              src="/drz.webp" 
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/drz.webp`}
               alt="Doctor Z Logo" 
               width={80} 
               height={80}
