@@ -1,0 +1,79 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # permite lanzarlo manualmente desde GitHub
+
+permissions:
+  contents: read
+  pages:    write
+  id-token: write
+
+# Solo un deploy a la vez; no cancela el en curso para no dejar el sitio a medias
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # ── 1. BUILD ──────────────────────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        run: pip install pyyaml markdown
+
+      # Regenera el HTML de cada curso a partir de su curso.md
+      # Así el markdown es la única fuente de verdad
+      - name: Regenerate course pages
+        run: |
+          shopt -s nullglob
+          for md in pages/*/curso.md; do
+            echo "▶  Building: $md"
+            python3 pages/build_course.py "$md" --no-update-json
+          done
+
+      # Ensambla solo los archivos que deben ser públicos
+      - name: Assemble static site
+        run: |
+          mkdir -p _site
+
+          # Archivo raíz
+          cp index.html _site/
+
+          # Evita que GitHub intente procesar con Jekyll
+          touch _site/.nojekyll
+
+          # Páginas de cursos y recursos
+          cp -r pages _site/pages
+
+          echo "── Contenido del artefacto ──"
+          find _site -type f | sort
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  # ── 2. DEPLOY ─────────────────────────────────────────────────────────────
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
