@@ -627,7 +627,7 @@ function BlackHoleComponent() {
         {/* Dr. Z Logo */}
         <div className="mt-auto flex justify-center">
           <img 
-            src="/drz.png" 
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/drz.png`}
             alt="Dr. Z Logo" 
             className="w-24 h-24 object-contain opacity-80 hover:opacity-100 transition-opacity"
           />

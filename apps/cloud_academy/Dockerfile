@@ -15,6 +15,7 @@ COPY . .
 
 # Set environment variable for build
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV DOCKER_BUILD=1
 
 # Build the application
 RUN npm run build
