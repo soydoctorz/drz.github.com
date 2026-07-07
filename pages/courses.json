@@ -2,17 +2,17 @@
   "cursos": [
     {
       "id": "extraterrestres",
-      "titulo": "Catástrofes Cósmicas",
-      "tagline": "Estrellas, agujeros negros y las peores catástrofes del cosmos",
-      "descripcion": "4 sesiones de astrofísica pura: aprende sobre las catástrofes más espectaculares del universo con el Dr. Z.",
+      "titulo": "Extraterrestres",
+      "tagline": "",
+      "descripcion": "De los aspectos culturales al análisis científico de la existencia y contacto con civilizaciones extraterrestres",
       "url": "pages/extraterrestres/",
       "imagen": "pages/extraterrestres/images/header.png",
       "etiquetas": [
-        "Astrofísica",
-        "Agujeros Negros",
-        "Catástrofes"
+        "Vida en el Universo",
+        "Astrobiología",
+        "Historia y Cultura "
       ],
-      "instructor": "Jhon Fredy Cardona Peña",
+      "instructor": "Jorge I. Zuluaga, Dr. Z",
       "sesiones": 4,
       "activo": true
     }

@@ -59,6 +59,9 @@ jobs:
             python3 pages/build_course.py "$md" --no-update-json
           done
 
+      - name: Regenerate demo pages
+        run: python3 demos/build_demo.py --all
+
       # Ensambla solo los archivos que deben ser públicos
       - name: Assemble static site
         run: |
@@ -75,6 +78,9 @@ jobs:
 
           # Páginas de cursos y recursos
           cp -r pages _site/pages
+
+          # Demos interactivos
+          cp -r demos _site/demos
 
           # Apps Next.js (export estático)
           mkdir -p _site/apps

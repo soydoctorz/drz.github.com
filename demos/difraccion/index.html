@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Difracción y criterio de Rayleigh – Dr. Z Academy</title>
+  <meta name="description" content="Explora cómo el diámetro del telescopio y la longitud de onda determinan el límite de resolución angular: el ángulo mínimo al que dos fuentes puntuales pueden verse separadas.">
+  <link rel="icon" href="https://drz-academy.github.io/assets/favicon.ico" sizes="any">
+  <link rel="icon" href="https://drz-academy.github.io/assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="https://drz-academy.github.io/assets/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dr. Z Academy">
+  <meta property="og:locale" content="es_CO">
+  <meta property="og:title" content="Difracción y criterio de Rayleigh – Dr. Z Academy">
+  <meta property="og:description" content="Explora cómo el diámetro del telescopio y la longitud de onda determinan el límite de resolución angular: el ángulo mínimo al que dos fuentes puntuales pueden verse separadas.">
+  <meta property="og:url" content="https://drz-academy.github.io/demos/difraccion/">
+  <meta property="og:image" content="https://drz-academy.github.io/assets/og-drz.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Difracción y criterio de Rayleigh – Dr. Z Academy">
+  <meta name="twitter:description" content="Explora cómo el diámetro del telescopio y la longitud de onda determinan el límite de resolución angular: el ángulo mínimo al que dos fuentes puntuales pueden verse separadas.">
+  <meta name="twitter:image" content="https://drz-academy.github.io/assets/og-drz.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/demos/demo.css">
+</head>
+<body>
+
+  <nav class="topbar" aria-label="Navegación">
+    <div class="topbar-left">
+      <a href="/" class="logo">Dr. Z <span>Academy</span></a>
+      <div class="breadcrumb" aria-label="Ruta">
+        <span class="sep">›</span>
+        <span><a href="/#demos">Demos</a></span>
+        <span class="sep">›</span>
+        <span>Difracción</span>
+      </div>
+    </div>
+    <a href="/#demos" class="topbar-back" aria-label="Volver a demos">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9.5 6h-7M5.5 9L2.5 6l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Volver
+    </a>
+  </nav>
+
+  <header class="demo-hero">
+    <div class="demo-hero-inner">
+      <span class="demo-label">Demo interactivo · Óptica</span>
+      <h1>Difracción y criterio de <em>Rayleigh</em></h1>
+      <p>Explora cómo el diámetro del telescopio y la longitud de onda determinan el límite de resolución angular: el ángulo mínimo al que dos fuentes puntuales pueden verse separadas.</p>
+    </div>
+  </header>
+
+  <main class="demo-body">
+    <div class="demo-widget">
+<style>
+    /* ════════════════════════════════════════════════════════════
+       Variables y Reset
+       ════════════════════════════════════════════════════════════ */
+    :root {
+      --amarillo : #FAD246;
+      --oscuro   : #0c0c0c;
+      --gris     : #888888;
+      --claro    : #E5E5E5;
+      --pared    : #3a3a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .demo-widget {
+      background: #fdfdfd;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      padding: 20px 10px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       Estructura Principal
+       ════════════════════════════════════════════════════════════ */
+    .widget { 
+      max-width: 760px; 
+      margin: 0 auto; 
+      padding: 24px 20px;
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .instrucciones {
+      font-size: 13px; color: #444;
+      background: #fafafa; border-left: 3px solid var(--amarillo);
+      padding: 12px 16px; margin-bottom: 24px;
+      border-radius: 0 4px 4px 0; line-height: 1.6;
+    }
+    .instrucciones b { color: #111; }
+
+    /* ════════════════════════════════════════════════════════════
+       Layout de Paneles Gráficos (Flex/Grid Adaptativo)
+       ════════════════════════════════════════════════════════════ */
+    .paneles { 
+      display: flex; 
+      flex-wrap: wrap;
+      gap: 20px; 
+      margin-bottom: 24px; 
+      justify-content: center; 
+      align-items: flex-start;
+    }
+    
+    .panel-col { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 8px; 
+      flex: 1 1 300px; /* Base width before wrapping */
+      align-items: center;
+      width: 100%;
+    }
+    
+    .panel-label { 
+      font-size: 12px; 
+      color: #666; 
+      text-align: center; 
+      font-weight: 500;
+      letter-spacing: .02em; 
+    }
+
+    /* Regla crítica para escalado pasivo del canvas */
+    canvas { 
+      display: block; 
+      border-radius: 6px; 
+      max-width: 100%; 
+      height: auto; 
+      object-fit: contain;
+      border: 1px solid #1a1a1a;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       Controles e Interfaces de Entrada
+       ════════════════════════════════════════════════════════════ */
+    .controles { 
+      display: flex; 
+      gap: 24px; 
+      margin-bottom: 24px; 
+      flex-wrap: wrap; 
+      background: #f8f8f8;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+    
+    .ctrl { flex: 1 1 240px; }
+    .ctrl label { 
+      display: flex; 
+      justify-content: space-between;
+      font-size: 13px; 
+      color: #333; 
+      margin-bottom: 8px; 
+      font-weight: 500;
+    }
+    .ctrl label .val { color: #c49a00; font-weight: 700; }
+    input[type="range"] { 
+      width: 100%; 
+      accent-color: var(--amarillo); 
+      cursor: pointer; 
+      height: 6px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       Módulo de Resultados (Fórmula)
+       ════════════════════════════════════════════════════════════ */
+    .formula {
+      background: var(--oscuro); 
+      border-radius: 8px; 
+      padding: 16px 20px;
+      text-align: center; 
+      color: var(--claro); 
+      font-size: 14px; 
+      line-height: 1.8;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .formula .ec  { font-size: 12px; color: var(--gris); display: block; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .formula .res { color: var(--amarillo); font-size: 22px; font-weight: 700; }
+    .formula .expl { font-size: 12px; color: #777; display: block; margin-top: 6px; }
+
+    /* ════════════════════════════════════════════════════════════
+       Metadatos y Créditos
+       ════════════════════════════════════════════════════════════ */
+    .creditos { 
+      font-size: 11px; 
+      color: #999; 
+      text-align: center; 
+      margin-top: 24px; 
+      letter-spacing: 0.03em;
+      border-top: 1px solid #eee;
+      padding-top: 16px;
+    }
+  </style>
+
+
+<div class="widget">
+
+  <p class="instrucciones">
+    <b>Dinámica del sistema:</b><br>
+    <b>1. Panel de ondas:</b> Al incrementar el diámetro de apertura, la dispersión angular del frente de onda disminuye.<br>
+    <b>2. Perfil de intensidad (Airy):</b> La longitud de onda interactúa con la apertura determinando la anchura del lóbulo principal. Desplazamientos hacia el rojo (700 nm) aumentan el límite de difracción comparado con el azul (400 nm).
+  </p>
+
+  <div class="paneles">
+    <div class="panel-col">
+      <p class="panel-label">Frentes de onda difractados</p>
+      <canvas id="cOndas" width="390" height="280"></canvas>
+    </div>
+    <div class="panel-col">
+      <p class="panel-label">Patrón de intensidad · Disco de Airy</p>
+      <canvas id="cAiry" width="288" height="280"></canvas>
+    </div>
+  </div>
+
+  <div class="controles">
+    <div class="ctrl">
+      <label>Diámetro del telescopio <span><span class="val" id="valD">50</span> cm</span></label>
+      <input type="range" id="sD" min="5" max="200" value="50" step="1">
+    </div>
+    <div class="ctrl">
+      <label>Longitud de onda (λ) <span><span class="val" id="valL">550</span> nm</span></label>
+      <input type="range" id="sL" min="400" max="700" value="550" step="5">
+    </div>
+  </div>
+
+  <div class="formula">
+    <span class="ec">Criterio de Rayleigh</span>
+    Poder de separación angular: <span class="res" id="res">0.28</span> arcsec
+    <span class="expl">Límite teórico: Dos fuentes puntuales separadas por un ángulo menor serán resueltas como una sola entidad por el sistema óptico.</span>
+  </div>
+
+  <div class="creditos">Límite de resolución angular · Créditos: Dr. Z Academy</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// BLOQUE LÓGICO INTACTO
+// ══════════════════════════════════════════════════════════════
+const AM  = '#FAD246', OSC = '#0c0c0c', GR = '#888888', LC = '#E5E5E5', PAR = '#3a3a3a';
+const cO  = document.getElementById('cOndas'), ctxO = cO.getContext('2d');
+const cA  = document.getElementById('cAiry'),  ctxA = cA.getContext('2d');
+
+let d_cm = 50, lam_nm = 550, fase = 0;
+
+const AX = 168, CY = 140, SEP = 30;
+const Z  = [1.22, 2.233, 3.238];
+
+const TH_MAX = 3.0 * 1.22 * 550e-9 / (50 * 0.01);  
+
+function j1(x) {
+  const ax = Math.abs(x);
+  if (ax < 1e-10) return 0;
+  if (ax <= 3.75) {
+    const y = (x / 3.75) ** 2;
+    return x * (0.5 + y*(-0.56249985 + y*(0.21093573 + y*(-0.03954289 +
+           y*(0.00443319  + y*(-0.00031761 + y*0.00001109))))));
+  }
+  const y = 3.75 / ax;
+  const p = 0.79788456 + y*(-0.00000077 + y*(-0.00552740 +
+            y*(-0.00009512 + y*(0.00137237 + y*(-0.00072805 + y*0.00014476)))));
+  const q = ax - 2.356194491 + y*(0.12499612 + y*(0.00005650 +
+            y*(-0.00637879 + y*(0.00074348 + y*(-0.00079824 + y*0.00029137)))));
+  return (x > 0 ? 1 : -1) * Math.sqrt(1/ax) * p * Math.cos(q);
+}
+function airyI(u) {
+  if (Math.abs(u) < 1e-8) return 1.0;
+  const v = 2*j1(u)/u; return v*v;
+}
+
+function dibujarLobulo(tpInner, tpOuter, opMax, anillo) {
+  const W = cO.width;
+  ctxO.save();
+  ctxO.beginPath();
+  if (anillo) {
+    ctxO.moveTo(AX,CY); ctxO.lineTo(W+10,CY+tpOuter); ctxO.lineTo(W+10,CY-tpOuter); ctxO.closePath();
+    ctxO.moveTo(AX,CY); ctxO.lineTo(W+10,CY-tpInner); ctxO.lineTo(W+10,CY+tpInner); ctxO.closePath();
+    ctxO.clip('evenodd');
+  } else {
+    ctxO.moveTo(AX,CY); ctxO.lineTo(W+10,CY-tpOuter); ctxO.lineTo(W+10,CY+tpOuter); ctxO.closePath();
+    ctxO.clip();
+  }
+  ctxO.strokeStyle = AM; ctxO.lineWidth = 1.3;
+  const maxR = W - AX + SEP;
+  for (let r = (fase % SEP); r < maxR; r += SEP) {
+    if (r < 3) continue;
+    const alpha = opMax * (1 - r/maxR);
+    if (alpha < 0.01) continue;
+    ctxO.globalAlpha = alpha;
+    ctxO.beginPath(); ctxO.arc(AX, CY, r, 0, 2*Math.PI); ctxO.stroke();
+  }
+  ctxO.restore();
+}
+
+function dibujarOndas() {
+  const W = cO.width, H = cO.height;
+  ctxO.fillStyle = OSC; ctxO.fillRect(0,0,W,H);
+
+  const altAp = Math.max(10, Math.min(H*0.88, (d_cm/5)*13));
+  const apTop = CY - altAp/2, apBot = CY + altAp/2;
+  const esc = (lam_nm/550) * (5/d_cm) * (H*0.42);
+  const tp  = Z.map(z => esc*z);
+
+  ctxO.save();
+  ctxO.strokeStyle = AM; ctxO.lineWidth = 1.4; ctxO.globalAlpha = 0.72;
+  for (let x = (fase%SEP)-SEP; x < AX; x += SEP) {
+    if (x < 4) continue;
+    ctxO.beginPath(); ctxO.moveTo(x,2); ctxO.lineTo(x,H-2); ctxO.stroke();
+  }
+  ctxO.restore();
+
+  ctxO.fillStyle = PAR;
+  ctxO.fillRect(AX-4, 0,    8, apTop);
+  ctxO.fillRect(AX-4, apBot, 8, H-apBot);
+
+  dibujarLobulo(tp[0], tp[1], 0.18, true);
+  dibujarLobulo(0, tp[0], 0.70, false);
+
+  ctxO.save();
+  ctxO.setLineDash([5,4]); ctxO.strokeStyle=LC; ctxO.lineWidth=0.7; ctxO.globalAlpha=0.35;
+  ctxO.beginPath();
+  ctxO.moveTo(AX,CY); ctxO.lineTo(W, CY-tp[0]);
+  ctxO.moveTo(AX,CY); ctxO.lineTo(W, CY+tp[0]);
+  ctxO.stroke(); ctxO.setLineDash([]); ctxO.restore();
+
+  ctxO.save();
+  ctxO.strokeStyle=LC; ctxO.lineWidth=0.7; ctxO.globalAlpha=0.5; ctxO.setLineDash([2,2]);
+  ctxO.beginPath(); ctxO.moveTo(AX+8,apTop); ctxO.lineTo(AX+8,apBot); ctxO.stroke();
+  ctxO.setLineDash([]); ctxO.restore();
+  ctxO.fillStyle=LC; ctxO.font='bold 12px system-ui'; ctxO.fillText('d', AX+13, CY+4);
+
+  if (tp[0] > 15) {
+    ctxO.fillStyle=LC; ctxO.globalAlpha=0.6; ctxO.font='12px system-ui';
+    ctxO.fillText('θ', AX+36, CY - tp[0]*0.38); ctxO.globalAlpha=1;
+  }
+}
+
+function dibujarAiry() {
+  const W = cA.width, H = cA.height;
+  const pl=18, pr=14, pt=22, pb=42;
+  const pw = W-pl-pr, ph = H-pt-pb;
+
+  ctxA.fillStyle = OSC; ctxA.fillRect(0,0,W,H);
+
+  const th_min = 1.22 * (lam_nm*1e-9) / (d_cm*0.01);  
+  const N = pw * 2;
+  const pts = [];
+
+  for (let i = 0; i <= N; i++) {
+    const th = -TH_MAX + (2*TH_MAX*i/N);
+    const u  = Math.PI * (d_cm*0.01) * th / (lam_nm*1e-9);
+    pts.push({ x: pl+(i/N)*pw,  y: pt+ph*(1-airyI(u)) });
+  }
+
+  ctxA.beginPath();
+  ctxA.moveTo(pts[0].x, pt+ph);
+  for (const p of pts) ctxA.lineTo(p.x, p.y);
+  ctxA.lineTo(pts[N].x, pt+ph); ctxA.closePath();
+  ctxA.fillStyle=AM; ctxA.globalAlpha=0.12; ctxA.fill(); ctxA.globalAlpha=1;
+
+  ctxA.beginPath();
+  for (let i=0; i<pts.length; i++) i ? ctxA.lineTo(pts[i].x,pts[i].y) : ctxA.moveTo(pts[i].x,pts[i].y);
+  ctxA.strokeStyle=AM; ctxA.lineWidth=2.0; ctxA.stroke();
+
+  const fracP = (th_min + TH_MAX) / (2*TH_MAX);  
+  const xP = pl + pw * fracP;
+  const xM = pl + pw * (1 - fracP);
+
+  if (fracP > 0.03 && fracP < 0.97) {
+    ctxA.setLineDash([4,4]); ctxA.strokeStyle=LC; ctxA.lineWidth=0.8; ctxA.globalAlpha=0.5;
+    ctxA.beginPath();
+    ctxA.moveTo(xP, pt); ctxA.lineTo(xP, pt+ph);
+    ctxA.moveTo(xM, pt); ctxA.lineTo(xM, pt+ph);
+    ctxA.stroke(); ctxA.setLineDash([]); ctxA.globalAlpha=1;
+
+    ctxA.fillStyle=LC; ctxA.globalAlpha=0.7; ctxA.font='10px system-ui';
+    ctxA.fillText('α\u2098\u1d35\u207f', xP+3, pt+13);
+    ctxA.globalAlpha=1;
+  }
+
+  const as = th_min * (180/Math.PI) * 3600;
+  const asMax = TH_MAX * (180/Math.PI) * 3600;
+
+  ctxA.strokeStyle=GR; ctxA.lineWidth=0.6;
+  ctxA.beginPath(); ctxA.moveTo(pl,pt+ph); ctxA.lineTo(pl+pw,pt+ph); ctxA.stroke();
+
+  ctxA.strokeStyle=GR; ctxA.lineWidth=0.7;
+  const xCen = pl+pw/2;
+  ctxA.beginPath(); ctxA.moveTo(xCen,pt+ph); ctxA.lineTo(xCen,pt+ph+4); ctxA.stroke();
+  ctxA.fillStyle=GR; ctxA.font='10px system-ui'; ctxA.textAlign='center';
+  ctxA.fillText('0', xCen, pt+ph+13);
+
+  if (fracP > 0.06 && fracP < 0.94) {
+    const fmt = as < 1 ? as.toFixed(2) : as < 10 ? as.toFixed(1) : Math.round(as).toString();
+    ctxA.beginPath();
+    ctxA.moveTo(xP,pt+ph); ctxA.lineTo(xP,pt+ph+4);
+    ctxA.moveTo(xM,pt+ph); ctxA.lineTo(xM,pt+ph+4);
+    ctxA.stroke();
+    ctxA.fillText('+'+fmt+'"', xP, pt+ph+13);
+    ctxA.fillText('−'+fmt+'"', xM, pt+ph+13);
+  }
+
+  ctxA.font='10.5px system-ui'; ctxA.textAlign='center';
+  ctxA.fillText('posición angular', pl+pw/2, H-6);
+  ctxA.textAlign='left';
+
+  ctxA.font='10px system-ui';
+  ctxA.save(); ctxA.translate(10, pt+ph/2); ctxA.rotate(-Math.PI/2);
+  ctxA.textAlign='center'; ctxA.fillText('intensidad', 0, 0);
+  ctxA.restore(); ctxA.textAlign='left';
+
+  const fmt2 = as < 0.1 ? as.toFixed(3) : as < 10 ? as.toFixed(2) : as.toFixed(1);
+  document.getElementById('res').textContent  = fmt2;
+  document.getElementById('valD').textContent = d_cm;
+  document.getElementById('valL').textContent = lam_nm;
+}
+
+function loop() { fase += 1.1; dibujarOndas(); requestAnimationFrame(loop); }
+
+document.getElementById('sD').addEventListener('input', function() { d_cm   = +this.value; dibujarAiry(); });
+document.getElementById('sL').addEventListener('input', function() { lam_nm = +this.value; dibujarAiry(); });
+
+dibujarAiry();
+loop();
+</script>
+    </div>
+
+    <section class="demo-teoria">
+      <h2>¿Qué estás viendo?</h2>
+      <p>
+  Cuando la luz pasa por una apertura circular (la lente o el espejo de un telescopio),
+  se difracta formando un patrón de intensidad llamado <strong>disco de Airy</strong>:
+  un lóbulo central brillante rodeado de anillos concéntricos más tenues.
+  Dos estrellas solo se pueden <em>resolver</em> (distinguir como fuentes separadas)
+  si el lóbulo central de una cae fuera del primer mínimo de la otra.
+</p>
+<p>
+  El <strong>criterio de Rayleigh</strong> establece ese límite como:
+</p>
+<p>
+  <span class="formula-inline">θ<sub>min</sub> = 1.22 · λ / D</span>
+</p>
+<p>
+  donde λ es la longitud de onda de la luz observada y D el diámetro de la apertura.
+  Reducir λ (luz azul) o aumentar D (telescopio más grande) mejora la resolución.
+  El Hubble (D ≈ 2.4 m) alcanza ~0.05 arcsec en el visible; el ELT (D ≈ 39 m), ~0.003 arcsec.
+</p>
+    </section>
+  </main>
+
+  <footer class="demo-footer">
+    © 2026 <a href="https://drz.academy" target="_blank" rel="noopener">Dr. Z Academy</a>
+    · <a href="/#demos">Más demos</a>
+    · <a href="https://github.com/drz-academy/drz-academy.github.io" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+
+</body>
+</html>

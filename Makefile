@@ -1,4 +1,4 @@
-.PHONY: help build pages sync-site start stop
+.PHONY: help build pages demos sync-site start stop
 
 PORT ?= 8000
 HOST ?= 127.0.0.1
@@ -9,6 +9,7 @@ help:
 	@echo ""
 	@echo "  make build      - Construye apps Next.js y ensambla $(SITE)/"
 	@echo "  make pages      - Regenera HTML y QR de todos los cursos"
+	@echo "  make demos      - Regenera HTML y QR de todos los demos"
 	@echo "  make sync-site  - Copia index, assets y pages/ a $(SITE)/"
 	@echo "  make start      - Arranca http://$(HOST):$(PORT) (actualiza cursos si hace falta)"
 	@echo "  make stop       - Detiene el servidor en el puerto $(PORT)"
@@ -22,14 +23,19 @@ pages:
 		echo "  $$md"; python3 pages/build_course.py "$$md"; \
 	done'
 
+demos:
+	@echo "▶  Regenerating demo pages…"
+	@python3 demos/build_demo.py --all
+
 sync-site:
 	@mkdir -p $(SITE)
 	@cp index.html $(SITE)/
 	@cp -r assets $(SITE)/assets
 	@rm -rf $(SITE)/pages && cp -r pages $(SITE)/pages
+	@rm -rf $(SITE)/demos && cp -r demos $(SITE)/demos
 	@touch $(SITE)/.nojekyll
 
-build: pages
+build: pages demos
 	@echo "▶  Building Cloud Academy…"
 	@cd apps/cloud_academy && npm ci --legacy-peer-deps && npm run build
 	@echo "▶  Building Lighting Black Holes…"
@@ -44,7 +50,7 @@ build: pages
 
 start:
 	@test -f $(SITE)/apps/cloud_academy/index.html || $(MAKE) build
-	@$(MAKE) pages sync-site
+	@$(MAKE) pages demos sync-site
 	@echo "Starting server on http://$(HOST):$(PORT)"
 	@cd $(SITE) && nohup python3 -m http.server "$(PORT)" --bind "$(HOST)" >/dev/null 2>&1 &
 	@sleep 0.2

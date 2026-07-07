@@ -22,7 +22,7 @@ Dependencias Python (`requirements.txt`):
 |---------|-----|
 | `pyyaml` | Frontmatter YAML de `curso.md` |
 | `markdown` | Conversión Markdown → HTML |
-| `qrcode[pil]` | Código QR de inscripción para afiches |
+| `qrcode[pil]` | Códigos QR de inscripción (cursos) y demos |
 
 ## Probar el sitio en local
 
@@ -32,7 +32,7 @@ make start    # sirve _site/ en http://127.0.0.1:8000
 make stop     # detiene el servidor
 ```
 
-El sitio local replica lo que publica GitHub Pages: página principal, cursos en `/pages/<id>/` y apps en `/apps/...`.
+El sitio local replica lo que publica GitHub Pages: página principal, cursos en `/pages/<id>/`, demos en `/demos/<id>/` y apps en `/apps/...`.
 
 ---
 
@@ -168,6 +168,150 @@ Tras desplegar, si WhatsApp sigue mostrando la imagen vieja, borra la caché en 
 
 ---
 
+## Demos interactivos: modelo de archivos
+
+Los demos son simulaciones didácticas ligeras (HTML/CSS/JS) que viven en `demos/<id>/`. Comparten una plantilla de página y una hoja de estilos común; el widget interactivo suele venir de fuera (p. ej. exportado desde Gemini) y se pega tal cual en `content.html`.
+
+```
+demos/
+├── demo.css              ← estilos compartidos (topbar, hero, footer)
+├── build_demo.py         ← generador de páginas + QR
+├── demos.json            ← índice para la sección «Demos» del index (generado)
+├── template/demo.json    ← plantilla para demos nuevos
+└── mi-demo/
+    ├── demo.json         ← metadatos del encabezado y tarjeta del índice
+    ├── content.html      ← widget interactivo (editar aquí)
+    ├── teoria.html       ← contexto teórico opcional
+    ├── index.html        ← generado; no editar a mano
+    └── images/
+        └── qr-demo.png   ← QR → URL pública del demo (generado, con logo)
+```
+
+La página principal carga las tarjetas desde `demos/demos.json`, igual que los cursos usan `pages/courses.json`.
+
+---
+
+## Publicar un demo nuevo
+
+### 1. Crear el esqueleto
+
+```bash
+python3 demos/build_demo.py --new mi-demo
+```
+
+Esto crea `demos/mi-demo/` con `demo.json`, `content.html` (placeholder) y `teoria.html`.
+
+### 2. Completar metadatos
+
+Edita `demos/mi-demo/demo.json`:
+
+| Campo | Descripción |
+|-------|-------------|
+| `id` | Identificador único (= nombre del directorio) |
+| `titulo` | Primera parte del título del hero |
+| `titulo_destacado` | Palabra resaltada en amarillo (p. ej. «Rayleigh») |
+| `categoria` | Aparece en la etiqueta «Demo interactivo · …» |
+| `breadcrumb` | Texto corto en la ruta de navegación (opcional) |
+| `descripcion` | Párrafo bajo el título en la página del demo |
+| `descripcion_corta` | Resumen para la tarjeta en el índice |
+| `icono` | Emoji de la tarjeta (p. ej. `🔭`) |
+| `etiquetas` | Tags en la tarjeta del índice |
+| `activo` | `true` para mostrar en el índice |
+| `teoria_titulo` | Título de la sección teórica (opcional) |
+| `qr_imagen` | Ruta del QR generado (por defecto `images/qr-demo.png`) |
+
+### 3. Pegar el widget interactivo
+
+Copia el HTML/CSS/JS del demo en `demos/mi-demo/content.html`. Normalmente incluye un `<style>`, el markup del widget y un `<script>`.
+
+El generador adapta estilos que apuntan a `body` para que no rompan el fondo blanco de la plantilla (los reescribe bajo `.demo-widget`).
+
+**Importar desde HTML de WordPress o drz.academy** (bloque de código embebido):
+
+```bash
+python3 demos/build_demo.py --import "contrib/Mi demo – Dr. Z Academy.html" --into demos/mi-demo/
+```
+
+Extrae el contenido del bloque de código y lo guarda en `content.html`.
+
+### 4. Añadir contexto teórico (opcional)
+
+Edita `demos/mi-demo/teoria.html` con párrafos HTML. Aparece bajo el widget en la página del demo.
+
+### 5. Generar la página, QR e índice
+
+```bash
+python3 demos/build_demo.py demos/mi-demo/demo.json
+```
+
+Este comando:
+
+1. Genera `demos/mi-demo/index.html` (plantilla común + encabezado + widget + teoría)
+2. Genera `images/qr-demo.png` apuntando a `https://drz-academy.github.io/demos/<id>/`
+3. Actualiza `demos/demos.json` para la tarjeta del índice
+
+Para regenerar **todos** los demos:
+
+```bash
+python3 demos/build_demo.py --all
+# o
+make demos
+```
+
+### 6. Revisar en local y publicar
+
+```bash
+make demos sync-site
+cd _site && python3 -m http.server 8000
+# Abre http://127.0.0.1:8000/demos/mi-demo/
+```
+
+Para el sitio completo (apps incluidas): `make build && make start`.
+
+Cuando esté listo, haz commit de `demo.json`, `content.html`, `teoria.html`, `index.html`, `demos.json` e `images/qr-demo.png`, y push a `main`.
+
+---
+
+## Actualizar un demo existente
+
+1. Edita `demos/<id>/demo.json` (texto del encabezado, tarjeta, etc.).
+2. Si cambiaste el widget, edita `demos/<id>/content.html`.
+3. Regenera:
+
+```bash
+python3 demos/build_demo.py demos/<id>/demo.json
+```
+
+4. Commit y push a `main`.
+
+### Opciones del generador
+
+```bash
+# Sin regenerar QR
+python3 demos/build_demo.py demos/mi-demo/demo.json --no-qr
+
+# Sin tocar demos.json
+python3 demos/build_demo.py demos/mi-demo/demo.json --no-update-json
+```
+
+---
+
+## QR de demos
+
+Cada demo genera un QR de 512×512 px con el logo de Dr. Z en el centro:
+
+| Archivo | Destino | Uso |
+|---------|---------|-----|
+| `images/qr-demo.png` | `https://drz-academy.github.io/demos/<id>/` | Afiches, presentaciones, material impreso |
+
+Regenera al crear o actualizar el demo:
+
+```bash
+python3 demos/build_demo.py demos/<id>/demo.json
+```
+
+---
+
 ## Despliegue en producción
 
 El workflow `.github/workflows/deploy.yml` se ejecuta en cada push a `main`:
@@ -175,7 +319,8 @@ El workflow `.github/workflows/deploy.yml` se ejecuta en cada push a `main`:
 1. Instala dependencias Python (`requirements.txt`) y Node.js
 2. Compila las apps Next.js
 3. Regenera HTML de todos los cursos desde `pages/*/curso.md`
-4. Ensambla `_site/` y publica en GitHub Pages
+4. Regenera HTML de todos los demos desde `demos/*/demo.json`
+5. Ensambla `_site/` y publica en GitHub Pages
 
 URL pública: **https://drz-academy.github.io**
 
@@ -189,9 +334,14 @@ También puedes lanzar el deploy manualmente desde la pestaña **Actions** → *
 |-------|---------|
 | Nuevo curso | `python3 pages/build_course.py --new <id>` |
 | Generar / actualizar curso | `python3 pages/build_course.py pages/<id>/curso.md` |
+| Nuevo demo | `python3 demos/build_demo.py --new <id>` |
+| Generar / actualizar demo | `python3 demos/build_demo.py demos/<id>/demo.json` |
+| Regenerar todos los demos | `python3 demos/build_demo.py --all` o `make demos` |
 | Sitio local | `make build && make start` |
 | Plantilla de curso | `pages/template/curso.md` |
-| Generador | `pages/build_course.py` |
+| Plantilla de demo | `demos/template/demo.json` |
+| Generador de cursos | `pages/build_course.py` |
+| Generador de demos | `demos/build_demo.py` |
 
 ## Estructura del repositorio
 
@@ -203,6 +353,12 @@ pages/
   courses.json          Índice de cursos (generado)
   template/curso.md     Plantilla para cursos nuevos
   <id>/                 Un directorio por curso
+demos/
+  demo.css              Estilos compartidos de demos
+  build_demo.py         Generador de demos + QR
+  demos.json            Índice de demos (generado)
+  template/demo.json    Plantilla para demos nuevos
+  <id>/                 Un directorio por demo
 apps/
   cloud_academy/        Cámara de burbujas (Next.js)
   lighting-black-holes/ Simulación agujeros negros (Next.js)

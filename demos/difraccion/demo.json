@@ -1,0 +1,14 @@
+{
+  "id": "difraccion",
+  "titulo": "Difracción y criterio de",
+  "titulo_destacado": "Rayleigh",
+  "categoria": "Óptica",
+  "breadcrumb": "Difracción",
+  "descripcion": "Explora cómo el diámetro del telescopio y la longitud de onda determinan el límite de resolución angular: el ángulo mínimo al que dos fuentes puntuales pueden verse separadas.",
+  "descripcion_corta": "Explora cómo el diámetro de un telescopio y la longitud de onda determinan el límite de resolución angular. Visualiza los frentes de onda y el disco de Airy en tiempo real.",
+  "icono": "🔭",
+  "etiquetas": ["Óptica", "Astronomía", "Canvas"],
+  "activo": true,
+  "teoria_titulo": "¿Qué estás viendo?",
+  "qr_imagen": "images/qr-demo.png"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "mi-demo",
+  "titulo": "Título del demo",
+  "titulo_destacado": "Palabra clave",
+  "categoria": "Física",
+  "descripcion": "Descripción larga que aparece en el encabezado de la página del demo.",
+  "descripcion_corta": "Resumen breve para la tarjeta en la página principal.",
+  "icono": "🔬",
+  "etiquetas": ["Física", "Interactivo"],
+  "activo": true,
+  "teoria_titulo": "¿Qué estás viendo?",
+  "qr_imagen": "images/qr-demo.png"
+}

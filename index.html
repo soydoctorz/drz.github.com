@@ -570,6 +570,7 @@
       <nav>
         <a href="#cursos">Cursos</a>
         <a href="#apps">Aplicaciones</a>
+        <a href="#demos">Demos</a>
         <a href="#sobre-este-sitio">Sobre este sitio</a>
         <a href="https://drz.academy" target="_blank" rel="noopener">drz.academy</a>
       </nav>
@@ -606,6 +607,7 @@
         <div class="hero-ctas">
           <a href="#cursos" class="btn btn-primary">Ver cursos</a>
           <a href="#apps" class="btn btn-ghost">Aplicaciones</a>
+          <a href="#demos" class="btn btn-ghost">Demos</a>
           <a href="https://drz.academy/academia/" target="_blank" rel="noopener" class="btn btn-ghost">drz.academy</a>
           <a href="https://github.com/drz-academy/drz-academy.github.io" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
         </div>
@@ -703,6 +705,26 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── DEMOS ────────────────────────────────────────────────── -->
+  <section id="demos">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-label">Demostraciones</span>
+        <h2 class="section-title">Demos interactivos</h2>
+        <p class="section-desc">
+          Pequeñas simulaciones didácticas de conceptos físicos y matemáticos.
+          Cada demo funciona directamente en el navegador, sin instalación.
+        </p>
+      </div>
+
+      <div class="apps-grid" id="demos-grid">
+        <p id="demos-grid-empty">Cargando demos…</p>
       </div>
     </div>
   </section>
@@ -860,6 +882,43 @@
         })
         .catch(() => {
           grid.innerHTML = '<p id="cursos-grid-empty">No hay cursos activos en este momento.</p>';
+        });
+    })();
+
+    (function () {
+      const grid  = document.getElementById('demos-grid');
+      if (!grid) return;
+
+      function tagHtml(tags) {
+        return (tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+      }
+
+      function renderCard(d) {
+        return `
+        <div class="app-card">
+          <div class="app-card-icon">${d.icono || '🔬'}</div>
+          <h3>${d.titulo}</h3>
+          <p>${d.descripcion || ''}</p>
+          <div class="app-card-tags">${tagHtml(d.etiquetas)}</div>
+          <a href="${d.url}" class="app-card-link">
+            Abrir demo
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>`;
+      }
+
+      fetch('demos/demos.json')
+        .then(r => r.json())
+        .then(data => {
+          const activos = (data.demos || []).filter(d => d.activo);
+          grid.innerHTML = activos.length
+            ? activos.map(renderCard).join('')
+            : '<p id="demos-grid-empty">No hay demos publicados aún.</p>';
+        })
+        .catch(() => {
+          grid.innerHTML = '<p id="demos-grid-empty">No hay demos publicados aún.</p>';
         });
     })();
   </script>

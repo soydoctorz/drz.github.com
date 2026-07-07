@@ -1,17 +1,17 @@
 ---
 id: "extraterrestres"
-titulo: "Catástrofes Cósmicas"
-tagline: "Estrellas, agujeros negros y las peores catástrofes del cosmos"
-descripcion: "4 sesiones de astrofísica pura: aprende sobre las catástrofes más espectaculares del universo con el Dr. Z."
-instructor: "Jhon Fredy Cardona Peña"
+titulo: "Extraterrestres"
+tagline: ""
+descripcion: "De los aspectos culturales al análisis científico de la existencia y contacto con civilizaciones extraterrestres"
+instructor: "Jorge I. Zuluaga, Dr. Z"
 sesiones: 4
 duracion_sesion: "2 horas"
-dia: "miércoles"
+dia: "lunes"
 horario: "6:30 pm a 8:30 pm"
-lugar: "Colegio La Enseñanza, Medellín (Colombia)"
+lugar: "Virtual y Colegio La Enseñanza, Medellín (Colombia)"
 direccion: "Cra. 43 No. 9 Sur 195"
-tiene_zoom: true
-tiene_classroom: true
+tiene_zoom: false
+tiene_classroom: false
 inscripcion_url: "https://tinyurl.com/jzx4jyya"
 imagen_header: "images/header.png"
 imagen_qr_curso: "images/qr-curso.png"
@@ -20,34 +20,21 @@ fotos:
   - "images/foto1.jpg"
   - "images/foto2.jpg"
 etiquetas:
-  - "Astrofísica"
-  - "Agujeros Negros"
-  - "Catástrofes"
+  - "Vida en el Universo"
+  - "Astrobiología"
+  - "Historia y Cultura "
 email_contacto: "SoyDoctorZ@gmail.com"
 whatsapp: "https://wa.me/573022871135"
 activo: true
 ---
 
-## ¿De qué va este curso?
+## Presentación
 
-Desde que nacimos en el universo ha sido un lugar violento y hostil. O bueno, al menos eso es lo que nos parece a los humanos que andamos por el mundo asustándonos con impactos de asteroides y explosiones de estrellas. ¡Deberíamos madurar!
 
-**Este es un curso para aproximarnos al universo en su faceta más corriente, es decir, a través de las catástrofes**: estrellas devoradas por agujeros negros, protoplanetas que chocan como condición inicial para que se cuezan planetas más grandes, sistemas planetarios desbaratados por el paso de un agujero negro al garete, estrellas que chocan contra otras estrellas o que se devoran mutuamente, agujeros negros microscópicos que atraviesan como agujas hipodérmicas a planetas y estrellas por igual, planetas consumidos por el plasma calcinante de sus estrellas envejecidas, estrellas que se hacen añicos por la aniquilación de antimateria (¡así como lo oyen!) y otras que desaparecen sin dejar rastros al ser devoradas por su propio núcleo oscuro.
 
-**Sé que todo suena bastante raro, pero hay que acostumbrarse.** Es el Universo en el que nos tocó vivir. En lugar de andar asustándonos, usemos estos curiosos fenómenos para aprender de astrofísica.
+## ¿Quién es el profe?
 
-## ¿Puedes mencionar algunos temas?
-
-La astrofísica es una ciencia con muchos perendengues, pero aquí no hay tiempo para profundizar en todo. Abarcaremos algunos conceptos importantes que nos permitirán entender las catástrofes más espectaculares del cosmos. Aquí les van unos títulos que pueden servir de abrebocas para lo que veremos en el curso:
-
-> Mil maneras de morir siendo una estrella.
-> No es divertido estar cerca de una estrella que muere.
-> Agujeros negros vagabundos ¡sálvense quien pueda!
-> Pinchados por un agujero negro primordial.
-> La Tierra contra Marte ¿quién gana?
-> Veo estrellas que chocaron.
-
-¿Susto o emoción? ¡Nada de ñervios que esto es con el Dr. Z!
+**Jorge I. Zuluaga** es **Doctor en Física**, profesor titular e investigador en la Universidad de Antioquia. Su trabajo integra investigación en ciencias planetarias y astrobiología, computación científica de alto desempeño y formación avanzada en física y astronomía. Ha liderado grupos y programas académicos, y cuenta con una trayectoria de publicaciones en exoplanetas, exolunas, campos magnéticos planetarios, dinámica orbital y meteoroides, junto con una labor sostenida de divulgación científica en escenarios académicos y públicos.
 
 ## ¿Cómo lo vamos a hacer?
 
@@ -61,7 +48,7 @@ Las sesiones de clase se realizarán presencialmente en las instalaciones del **
 
 Todo el material del curso, presentaciones, lecturas y videos **serán compartidos oportunamente con todas las personas del curso** en la [plataforma Google Classroom](https://classroom.google.com/) (¡necesitas una cuenta de Google para acceder a ella! ¡consíguela ya!).
 
-## ¿Me dan algo al final?
+## Certificación
 
 ¡Pero claro que por supuesto que sí! Al terminar el curso recibirás un **certificado de participación** ¡ni más faltaba!. Pero debes hacer algo primero.
 
@@ -85,6 +72,3 @@ Estos son los datos que no puedes olvidar sobre el curso:
 
 No estamos todo el tiempo pegados del correo o el WhatsApp, pero si escribes a [SoyDoctorZ@gmail.com](mailto:SoyDoctorZ@gmail.com) o al número de atención [+57 302 287 1135](https://wa.me/573022871135) te responderemos lo más rápido que podemos.
 
-## ¿Quién es el profe?
-
-**Jhon Fredy Cardona Peña** es **Magíster en Astrofísica por la Universidad Internacional de Valencia (España)**, con estudios de maestría en Tecnologías de Información para el Negocio (MBIT); ingeniero de Sistemas con Énfasis en Software. **Socio fundador de la Doctor Z Academy** y de la organización *Astroñoños* que reúne a entusiastas de todo el país alrededor de la pasión por las ciencias y la tecnología. Ñoño de tiempo completo y, en este curso, traductor de los misterios del universo a herramientas prácticas para la comunidad.
