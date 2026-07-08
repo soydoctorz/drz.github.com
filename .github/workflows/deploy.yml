@@ -53,10 +53,10 @@ jobs:
       - name: Regenerate course pages
         run: |
           shopt -s nullglob
-          for md in pages/*/curso.md; do
-            [ "$md" = "pages/template/curso.md" ] && continue
+          for md in cursos/*/curso.md; do
+            [ "$md" = "cursos/template/curso.md" ] && continue
             echo "▶  Building: $md"
-            python3 pages/build_course.py "$md" --no-update-json
+            python3 cursos/build_course.py "$md" --no-update-json
           done
 
       - name: Regenerate demo pages
@@ -77,7 +77,7 @@ jobs:
           touch _site/.nojekyll
 
           # Páginas de cursos y recursos
-          cp -r pages _site/pages
+          cp -r cursos _site/cursos
 
           # Demos interactivos
           cp -r demos _site/demos

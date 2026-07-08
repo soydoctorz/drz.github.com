@@ -32,16 +32,16 @@ make start    # sirve _site/ en http://127.0.0.1:8000
 make stop     # detiene el servidor
 ```
 
-El sitio local replica lo que publica GitHub Pages: página principal, cursos en `/pages/<id>/`, demos en `/demos/<id>/` y apps en `/apps/...`.
+El sitio local replica lo que publica GitHub Pages: página principal, cursos en `/cursos/<id>/`, demos en `/demos/<id>/` y apps en `/apps/...`.
 
 ---
 
 ## Cursos: modelo de archivos
 
-Cada curso vive en `pages/<id>/`:
+Cada curso vive en `cursos/<id>/`:
 
 ```
-pages/mi-curso/
+cursos/mi-curso/
 ├── curso.md              ← fuente de verdad (editar aquí)
 ├── index.html            ← generado; no editar a mano
 └── images/
@@ -52,7 +52,7 @@ pages/mi-curso/
     └── foto2.jpg         ← opcional
 ```
 
-El índice de la página principal lee `pages/courses.json`, también generado por el script.
+El índice de la página principal lee `cursos/courses.json`, también generado por el script.
 
 ---
 
@@ -61,14 +61,14 @@ El índice de la página principal lee `pages/courses.json`, también generado p
 ### 1. Crear el esqueleto
 
 ```bash
-python3 pages/build_course.py --new mi-curso
+python3 cursos/build_course.py --new mi-curso
 ```
 
-Esto crea `pages/mi-curso/` desde la plantilla en `pages/template/curso.md`, actualiza el `id` y genera el **QR de afiche** (`qr-curso.png`) apuntando a la hoja del curso.
+Esto crea `cursos/mi-curso/` desde la plantilla en `cursos/template/curso.md`, actualiza el `id` y genera el **QR de afiche** (`qr-curso.png`) apuntando a la hoja del curso.
 
 ### 2. Completar metadatos y contenido
 
-Edita `pages/mi-curso/curso.md`:
+Edita `cursos/mi-curso/curso.md`:
 
 - **Frontmatter** (bloque YAML entre `---`): título, tagline, instructor, horarios, URL de inscripción, etc.
 - **Cuerpo**: secciones con `## Título`. Usa `<!-- fotos -->` donde quieras la cuadrícula de fotos.
@@ -95,7 +95,7 @@ Las sesiones son los **<!--dia-->** de <!--horario-->.
 
 ### 3. Añadir imágenes
 
-Copia el banner y fotos a `pages/mi-curso/images/`:
+Copia el banner y fotos a `cursos/mi-curso/images/`:
 
 - **header.png** — banner horizontal para la cabecera (~2048×952 px)
 - **og-preview.jpg** — se genera solo; versión liviana del banner para WhatsApp/Twitter
@@ -104,20 +104,20 @@ Copia el banner y fotos a `pages/mi-curso/images/`:
 ### 4. Generar la página y actualizar el índice
 
 ```bash
-python3 pages/build_course.py pages/mi-curso/curso.md
+python3 cursos/build_course.py cursos/mi-curso/curso.md
 ```
 
 Este comando:
 
 1. **Regenera ambos QR** (`qr-curso.png` con logo → hoja del curso; `qr-inscripcion.png` → `inscripcion_url`)
-2. Genera `pages/mi-curso/index.html`
-3. Actualiza `pages/courses.json` para la tarjeta del índice
+2. Genera `cursos/mi-curso/index.html`
+3. Actualiza `cursos/courses.json` para la tarjeta del índice
 
 ### 5. Revisar en local y publicar
 
 ```bash
 make build && make start
-# Abre http://127.0.0.1:8000/pages/mi-curso/
+# Abre http://127.0.0.1:8000/cursos/mi-curso/
 ```
 
 Cuando esté listo, haz commit y push a `main`. GitHub Actions despliega automáticamente en unos minutos.
@@ -126,12 +126,12 @@ Cuando esté listo, haz commit y push a `main`. GitHub Actions despliega automá
 
 ## Actualizar un curso existente
 
-1. Edita `pages/<id>/curso.md` (texto, metadatos o URL de inscripción).
-2. Si cambiaste imágenes, reemplaza archivos en `pages/<id>/images/`.
+1. Edita `cursos/<id>/curso.md` (texto, metadatos o URL de inscripción).
+2. Si cambiaste imágenes, reemplaza archivos en `cursos/<id>/images/`.
 3. Regenera:
 
 ```bash
-python3 pages/build_course.py pages/<id>/curso.md
+python3 cursos/build_course.py cursos/<id>/curso.md
 ```
 
 4. Commit de `curso.md`, `index.html`, `courses.json` e imágenes (incluidos `qr-curso.png` y `qr-inscripcion.png` si cambiaron).
@@ -143,10 +143,10 @@ python3 pages/build_course.py pages/<id>/curso.md
 
 ```bash
 # Sin tocar courses.json (útil en CI; ya lo hace el workflow)
-python3 pages/build_course.py pages/mi-curso/curso.md --no-update-json
+python3 cursos/build_course.py cursos/mi-curso/curso.md --no-update-json
 
 # Sin regenerar el QR
-python3 pages/build_course.py pages/mi-curso/curso.md --no-qr
+python3 cursos/build_course.py cursos/mi-curso/curso.md --no-qr
 ```
 
 ---
@@ -157,7 +157,7 @@ El script genera **dos QR** de 512×512 px cada vez que corres `build_course.py`
 
 | Archivo | Destino | Uso | Logo |
 |---------|---------|-----|------|
-| `images/qr-curso.png` | `https://drz-academy.github.io/pages/<id>/` | Afiches, flyers, material impreso | Sí |
+| `images/qr-curso.png` | `https://drz-academy.github.io/cursos/<id>/` | Afiches, flyers, material impreso | Sí |
 | `images/qr-inscripcion.png` | `inscripcion_url` del frontmatter | Bloque «Inscríbete ya» en la página web | Sí |
 
 El QR de inscripción solo se genera si `inscripcion_url` tiene una URL real (no el placeholder `https://drz.academy`).
@@ -165,7 +165,7 @@ El QR de inscripción solo se genera si `inscripcion_url` tiene una URL real (no
 Regenera ambos al cambiar URLs o al crear el curso:
 
 ```bash
-python3 pages/build_course.py pages/mi-curso/curso.md
+python3 cursos/build_course.py cursos/mi-curso/curso.md
 ```
 
 ### Previsualización en WhatsApp / redes
@@ -195,7 +195,7 @@ demos/
         └── qr-demo.png   ← QR → URL pública del demo (generado, con logo)
 ```
 
-La página principal carga las tarjetas desde `demos/demos.json`, igual que los cursos usan `pages/courses.json`.
+La página principal carga las tarjetas desde `demos/demos.json`, igual que los cursos usan `cursos/courses.json`.
 
 ---
 
@@ -326,7 +326,7 @@ El workflow `.github/workflows/deploy.yml` se ejecuta en cada push a `main`:
 
 1. Instala dependencias Python (`requirements.txt`) y Node.js
 2. Compila las apps Next.js
-3. Regenera HTML de todos los cursos desde `pages/*/curso.md`
+3. Regenera HTML de todos los cursos desde `cursos/*/curso.md`
 4. Regenera HTML de todos los demos desde `demos/*/demo.json`
 5. Ensambla `_site/` y publica en GitHub Pages
 
@@ -340,15 +340,15 @@ También puedes lanzar el deploy manualmente desde la pestaña **Actions** → *
 
 | Tarea | Comando |
 |-------|---------|
-| Nuevo curso | `python3 pages/build_course.py --new <id>` |
-| Generar / actualizar curso | `python3 pages/build_course.py pages/<id>/curso.md` |
+| Nuevo curso | `python3 cursos/build_course.py --new <id>` |
+| Generar / actualizar curso | `python3 cursos/build_course.py cursos/<id>/curso.md` |
 | Nuevo demo | `python3 demos/build_demo.py --new <id>` |
 | Generar / actualizar demo | `python3 demos/build_demo.py demos/<id>/demo.json` |
 | Regenerar todos los demos | `python3 demos/build_demo.py --all` o `make demos` |
 | Sitio local | `make build && make start` |
-| Plantilla de curso | `pages/template/curso.md` |
+| Plantilla de curso | `cursos/template/curso.md` |
 | Plantilla de demo | `demos/template/demo.json` |
-| Generador de cursos | `pages/build_course.py` |
+| Generador de cursos | `cursos/build_course.py` |
 | Generador de demos | `demos/build_demo.py` |
 
 ## Estructura del repositorio
@@ -356,7 +356,7 @@ También puedes lanzar el deploy manualmente desde la pestaña **Actions** → *
 ```
 index.html              Página principal
 assets/                 Logos, favicons
-pages/
+cursos/
   build_course.py       Generador de cursos + QR
   courses.json          Índice de cursos (generado)
   template/curso.md     Plantilla para cursos nuevos

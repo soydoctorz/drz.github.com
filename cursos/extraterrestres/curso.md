@@ -42,6 +42,19 @@ activo: true
 
 **Jorge I. Zuluaga** es **Doctor en Física**, **profesor titular e investigador en la Universidad de Antioquia**. Su trabajo integra investigación en ciencias planetarias y astrobiología, computación científica y formación avanzada en física y astronomía. Ha liderado grupos y programas académicos; es cofundador del **programa de pregrado en astronomía en la Universidad de Antioquia** y de la **Asociación Multidisciplinaria en Biología y Astrobiología, AMEBA** que reune a profesionales y entusiastas de la astrobiología de Colombia y otros lugares del mundo desde hace más de una década. Cuenta con una destacada trayectoria de investigación en astrobiología teórica respaldada por varias decenas de publicaciones y por la participación en iniciativas como el **Arecibo Wow!**. Actualmente dirige la cátedra de astrobiología de la Facultad de Ciencias Exactas y Naturales de la Universidad de Antioquia y ha dirigido tesis de pregrado, maestría y doctorado en la materia. Su hoja de vida completa puede consultarse en [https://jorgezuluaga.github.io](https://jorgezuluaga.github.io).
 
+## Un vistazo al contenido
+
+Estos son algunos de los temas que se tratarán en la *Master Class*:
+
+- ¿Desde cuándo y por qué estamos obsesionados con los extraterrestres?.
+- ¿Son los extraterrestres del cine viables científicamente hablando?.
+- ¿Cuáles son las posibilidades de que existan civilizaciones extraterrestres de acuerdo a la última evidencia científica?
+- ¿Qué apariencia podrían tener los extraterrestres? 
+- ¿Podríamos toparnos primero con basura extraterrestre o con inteligencias artificiales extraterrestres?
+- ¿Son realmente limitantes las distancias y las velocidades para la expansión de una civilización tecnológica?
+
+Es importante señalar que el orden y la extensión con la que se trataran los temas depende de la elección del experto.
+
 ## A quién va dirigida esta actividad
 
 Esta *Master Class* está dirigida a entusiastas, estudiantes, profesionales, pensionados, que se dediquen a cualquier actividad o disciplina. **No se necesitan conocimientos previos** de matemáticas, física,  astronomía o de otras ciencias relacionadas con el tema, pero un conocimiento previo de estos temas pueden ayudar para profundizar en las discusiones. Pueden participar niños y jóvenes preferiblemente con una edad igual o mayor 12 años. 

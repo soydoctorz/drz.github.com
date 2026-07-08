@@ -104,6 +104,23 @@
 
     nav a:hover { color: var(--gold); opacity: 1; }
 
+    nav a.nav-drz {
+      background: rgba(37, 99, 235, 0.18);
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+      opacity: 1;
+    }
+
+    nav a.nav-drz:hover {
+      background: rgba(37, 99, 235, 0.32);
+      border-color: #60a5fa;
+      color: #dbeafe;
+      opacity: 1;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -566,16 +583,16 @@
   <!-- ── HEADER ───────────────────────────────────────────────── -->
   <header>
     <div class="header-inner">
-      <a href="/" class="logo">Dr. Z <span>Academy</span></a>
+      <a href="/" class="logo">Dr.Z Academy <span>- Code</span></a>
       <nav>
-        <a href="#cursos">Cursos</a>
         <a href="#apps">Aplicaciones</a>
         <a href="#demos">Demos</a>
+        <a href="#cursos">Cursos</a>
         <a href="#sobre-este-sitio">Sobre este sitio</a>
-        <a href="https://drz.academy" target="_blank" rel="noopener">drz.academy</a>
+        <a href="https://www.drz.academy" target="_blank" rel="noopener" class="nav-drz">drz.academy</a>
       </nav>
-      <a href="https://drz.academy/academia/" target="_blank" rel="noopener" class="btn btn-primary">
-        Ver cursos
+      <a href="#apps" class="btn btn-primary">
+        Explorar
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
@@ -605,9 +622,9 @@
           <a href="https://drz.academy" target="_blank" rel="noopener">drz.academy</a>.
         </p>
         <div class="hero-ctas">
-          <a href="#cursos" class="btn btn-primary">Ver cursos</a>
-          <a href="#apps" class="btn btn-ghost">Aplicaciones</a>
+          <a href="#apps" class="btn btn-primary">Aplicaciones</a>
           <a href="#demos" class="btn btn-ghost">Demos</a>
+          <a href="#cursos" class="btn btn-ghost">Cursos</a>
           <a href="https://drz.academy/academia/" target="_blank" rel="noopener" class="btn btn-ghost">drz.academy</a>
           <a href="https://github.com/drz-academy/drz-academy.github.io" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
         </div>
@@ -616,25 +633,6 @@
     <div class="hero-scroll-hint">
       <div class="scroll-line"></div>
       scroll
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- ── CURSOS ────────────────────────────────────────────────── -->
-  <section id="cursos">
-    <div class="section-inner">
-      <div class="section-header">
-        <span class="section-label">Información de Cursos</span>
-        <h2 class="section-title">Cursos activos</h2>
-        <p class="section-desc">
-          Hojas informativas de los cursos y experiencias que están abiertos ahora mismo.
-          El registro y la tienda viven en <a href="https://drz.academy/academia/" target="_blank" rel="noopener">drz.academy</a>.
-        </p>
-      </div>
-      <div class="courses-grid" id="cursos-grid">
-        <p id="cursos-grid-empty">Cargando cursos…</p>
-      </div>
     </div>
   </section>
 
@@ -731,6 +729,25 @@
 
   <hr class="divider">
 
+  <!-- ── CURSOS ────────────────────────────────────────────────── -->
+  <section id="cursos">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-label">Información de Cursos</span>
+        <h2 class="section-title">Cursos activos</h2>
+        <p class="section-desc">
+          Hojas informativas de los cursos y experiencias que están abiertos ahora mismo.
+          El registro y la tienda viven en <a href="https://drz.academy/academia/" target="_blank" rel="noopener">drz.academy</a>.
+        </p>
+      </div>
+      <div class="courses-grid" id="cursos-grid">
+        <p id="cursos-grid-empty">Cargando cursos…</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <!-- ── SOBRE ESTE SITIO ──────────────────────────────────────── -->
   <section id="sobre-este-sitio">
     <div class="section-inner">
@@ -768,6 +785,14 @@
           <div class="stat-card">
             <div class="stat-number">2</div>
             <div class="stat-label">Aplicaciones publicadas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-demos">—</div>
+            <div class="stat-label">Demos publicados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-cursos">—</div>
+            <div class="stat-label">Cursos publicados</div>
           </div>
           <div class="stat-card">
             <div class="stat-number">∞</div>
@@ -825,7 +850,7 @@
   <footer>
     <div class="footer-inner">
       <div class="footer-left">
-        <a href="/" class="logo" style="font-size: 1rem;">Dr. Z <span>Academy</span></a>
+        <a href="/" class="logo" style="font-size: 1rem;">Dr.Z Academy <span>- Code</span></a>
         <span class="footer-copy">© 2026 Dr.Z® · Medellín, Colombia</span>
       </div>
       <div class="footer-right">
@@ -872,7 +897,7 @@
         </a>`;
       }
 
-      fetch('pages/courses.json')
+      fetch('cursos/courses.json')
         .then(r => r.json())
         .then(data => {
           const activos = (data.cursos || []).filter(c => c.activo);
@@ -888,6 +913,19 @@
     (function () {
       const grid  = document.getElementById('demos-grid');
       if (!grid) return;
+
+      const placeholder = `
+        <div class="app-card" style="border-style: dashed; opacity: 0.5;">
+          <div class="app-card-icon">🔭</div>
+          <h3>Próximamente</h3>
+          <p>
+            Nuevos demos en desarrollo. Síguenos en redes o suscríbete al boletín
+            en <a href="https://drz.academy" target="_blank" rel="noopener">drz.academy</a> para enterarte.
+          </p>
+          <div class="app-card-tags">
+            <span class="tag">En desarrollo</span>
+          </div>
+        </div>`;
 
       function tagHtml(tags) {
         return (tags || []).map(t => `<span class="tag">${t}</span>`).join('');
@@ -913,13 +951,23 @@
         .then(r => r.json())
         .then(data => {
           const activos = (data.demos || []).filter(d => d.activo);
-          grid.innerHTML = activos.length
-            ? activos.map(renderCard).join('')
-            : '<p id="demos-grid-empty">No hay demos publicados aún.</p>';
+          grid.innerHTML = activos.map(renderCard).join('') + placeholder;
         })
         .catch(() => {
-          grid.innerHTML = '<p id="demos-grid-empty">No hay demos publicados aún.</p>';
+          grid.innerHTML = placeholder;
         });
+    })();
+
+    (function () {
+      Promise.all([
+        fetch('cursos/courses.json').then(r => r.json()).catch(() => ({ cursos: [] })),
+        fetch('demos/demos.json').then(r => r.json()).catch(() => ({ demos: [] })),
+      ]).then(([coursesData, demosData]) => {
+        const elCursos = document.getElementById('stat-cursos');
+        const elDemos  = document.getElementById('stat-demos');
+        if (elCursos) elCursos.textContent = (coursesData.cursos || []).length;
+        if (elDemos)  elDemos.textContent  = (demosData.demos || []).filter(d => d.activo).length;
+      });
     })();
   </script>
 

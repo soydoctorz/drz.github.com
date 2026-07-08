@@ -4,7 +4,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Identificador único del curso (sin espacios, sin tildes)
-# Se usará como nombre de directorio: pages/<id>/
+# Se usará como nombre de directorio: cursos/<id>/
 id: "nombre-del-curso"
 
 # Títulos que aparecen en la página y en el índice principal
@@ -36,7 +36,7 @@ tiene_classroom: true
 # URL de inscripción (obligatorio si activo: true)
 inscripcion_url: "https://drz.academy"
 
-# Imágenes (rutas relativas desde pages/<id>/)
+# Imágenes (rutas relativas desde cursos/<id>/)
 imagen_header: "images/header.png"
 imagen_og: "images/og-preview.jpg"           # banner para WhatsApp/redes (generado)
 imagen_qr_curso: "images/qr-curso.png"         # afiche → hoja del curso (generado)

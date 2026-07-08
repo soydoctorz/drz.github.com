@@ -1,6 +1,6 @@
 # Reference/contrib files – not for version control
 contrib/
-pages/contrib/
+cursos/contrib/
 
 # OS
 .DS_Store

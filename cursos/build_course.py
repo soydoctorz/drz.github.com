@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
 build_course.py – Convierte una hoja de curso en Markdown a una página HTML
-estilizada con el diseño de Dr. Z Academy y actualiza pages/courses.json.
+estilizada con el diseño de Dr. Z Academy y actualiza cursos/courses.json.
 
 Uso:
     # Crear nuevo curso desde la plantilla
-    python3 pages/build_course.py --new mi-curso
+    python3 cursos/build_course.py --new mi-curso
 
     # Generar/regenerar la página HTML de un curso
-    python3 pages/build_course.py pages/mi-curso/curso.md
+    python3 cursos/build_course.py cursos/mi-curso/curso.md
 
     # Opciones adicionales
-    python3 pages/build_course.py pages/mi-curso/curso.md --no-update-json
+    python3 cursos/build_course.py cursos/mi-curso/curso.md --no-update-json
 
 Dependencias:
     pip install -r requirements.txt
@@ -48,10 +48,10 @@ except ImportError:
 
 # ── Rutas base ───────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).resolve().parent.parent   # drz-academy.github.io/
-PAGES_DIR   = REPO_ROOT / "pages"
-TEMPLATE_MD = PAGES_DIR / "template" / "curso.md"
-COURSES_JSON= PAGES_DIR / "courses.json"
-TEMPLATE_DIR= PAGES_DIR / "template"
+CURSOS_DIR  = REPO_ROOT / "cursos"
+TEMPLATE_MD = CURSOS_DIR / "template" / "curso.md"
+COURSES_JSON= CURSOS_DIR / "courses.json"
+TEMPLATE_DIR= CURSOS_DIR / "template"
 SITE_URL    = "https://drz-academy.github.io"
 QR_CURSO    = "images/qr-curso.png"          # afiche → hoja del curso
 QR_INSCRIPCION = "images/qr-inscripcion.png"  # página → URL de inscripción
@@ -227,7 +227,7 @@ def render_section_content(content: str, photo_sets: dict[str, list[str]], meta:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def course_page_url(course_id: str) -> str:
-    return f"{SITE_URL}/pages/{course_id}/"
+    return f"{SITE_URL}/cursos/{course_id}/"
 
 
 def load_qr_logo() -> Image.Image:
@@ -382,7 +382,7 @@ def absolute_asset(path: str, course_id: str) -> str:
     """Convierte una ruta relativa de imagen del curso en URL absoluta."""
     if path.startswith("http"):
         return path
-    return f"{SITE_URL}/pages/{course_id}/{path.lstrip('/')}"
+    return f"{SITE_URL}/cursos/{course_id}/{path.lstrip('/')}"
 
 
 def head_meta(
@@ -433,7 +433,7 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
     fotos       = collect_photo_sets(meta)
     activo      = meta.get("activo", False)
     course_id   = meta.get("id", "curso")
-    page_url    = f"{SITE_URL}/pages/{course_id}/"
+    page_url    = f"{SITE_URL}/cursos/{course_id}/"
     og_rel      = meta.get("imagen_og", OG_PREVIEW)
     og_image    = absolute_asset(og_rel, course_id)
     og_width    = meta.get("_og_width")
@@ -642,7 +642,7 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def update_courses_json(meta: dict, course_dir: Path) -> None:
-    """Inserta o actualiza la entrada del curso en pages/courses.json."""
+    """Inserta o actualiza la entrada del curso en cursos/courses.json."""
     cid = meta.get("id", course_dir.name)
 
     # Ruta relativa del directorio del curso desde la raíz del repo
@@ -692,7 +692,7 @@ def update_courses_json(meta: dict, course_dir: Path) -> None:
 
 def cmd_new(course_id: str) -> None:
     """Crea un nuevo directorio de curso copiando la plantilla."""
-    dest_dir = PAGES_DIR / course_id
+    dest_dir = CURSOS_DIR / course_id
     dest_md  = dest_dir / "curso.md"
     dest_img = dest_dir / "images"
 
@@ -717,7 +717,7 @@ def cmd_new(course_id: str) -> None:
     print(f"      · header.png (banner, ~2048×952 px)")
     print(f"      · fotos opcionales para la sección «¿Cómo lo vamos a hacer?»")
     print(f"   3. Pon la URL real de inscripción en inscripcion_url y vuelve a generar:")
-    print(f"      python3 pages/build_course.py {dest_md.relative_to(REPO_ROOT)}")
+    print(f"      python3 cursos/build_course.py {dest_md.relative_to(REPO_ROOT)}")
 
 
 def cmd_build(md_path: Path, update_json: bool = True, generate_qr_code: bool = True) -> None:
@@ -727,7 +727,7 @@ def cmd_build(md_path: Path, update_json: bool = True, generate_qr_code: bool = 
         sys.exit(f"❌  No se encuentra el archivo:  {md_path}")
 
     if md_path.parent == TEMPLATE_DIR.resolve():
-        print("⏭️  Omitiendo plantilla (no es un curso publicable): pages/template/curso.md")
+        print("⏭️  Omitiendo plantilla (no es un curso publicable): cursos/template/curso.md")
         return
 
     source    = md_path.read_text(encoding="utf-8")
@@ -766,14 +766,14 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Ejemplos:
-  python3 pages/build_course.py --new cuantica-para-curiosos
-  python3 pages/build_course.py pages/cuantica-para-curiosos/curso.md
-  python3 pages/build_course.py pages/extraterrestres/curso.md --no-update-json
+  python3 cursos/build_course.py --new cuantica-para-curiosos
+  python3 cursos/build_course.py cursos/cuantica-para-curiosos/curso.md
+  python3 cursos/build_course.py cursos/extraterrestres/curso.md --no-update-json
 """,
     )
     parser.add_argument(
         "markdown", nargs="?", type=Path,
-        help="Ruta al archivo curso.md (ej: pages/mi-curso/curso.md)",
+        help="Ruta al archivo curso.md (ej: cursos/mi-curso/curso.md)",
     )
     parser.add_argument(
         "--new", metavar="ID",
@@ -781,7 +781,7 @@ Ejemplos:
     )
     parser.add_argument(
         "--no-update-json", action="store_true",
-        help="No actualizar pages/courses.json",
+        help="No actualizar cursos/courses.json",
     )
     parser.add_argument(
         "--no-qr", action="store_true",

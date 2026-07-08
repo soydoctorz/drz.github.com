@@ -1,4 +1,4 @@
-.PHONY: help build pages demos sync-site start stop
+.PHONY: help build cursos pages demos sync-site start stop
 
 PORT ?= 8000
 HOST ?= 127.0.0.1
@@ -8,20 +8,22 @@ help:
 	@echo "Servidor local para probar drz-academy.github.io"
 	@echo ""
 	@echo "  make build      - Construye apps Next.js y ensambla $(SITE)/"
-	@echo "  make pages      - Regenera HTML y QR de todos los cursos"
+	@echo "  make cursos     - Regenera HTML y QR de todos los cursos"
 	@echo "  make demos      - Regenera HTML y QR de todos los demos"
-	@echo "  make sync-site  - Copia index, assets y pages/ a $(SITE)/"
+	@echo "  make sync-site  - Copia index, assets y cursos/ a $(SITE)/"
 	@echo "  make start      - Arranca http://$(HOST):$(PORT) (actualiza cursos si hace falta)"
 	@echo "  make stop       - Detiene el servidor en el puerto $(PORT)"
 	@echo ""
 	@echo "  PORT=3000 make start   - Usar otro puerto"
 
-pages:
+cursos:
 	@echo "▶  Regenerating course pages…"
-	@bash -c 'shopt -s nullglob; for md in pages/*/curso.md; do \
-		[ "$$md" = "pages/template/curso.md" ] && continue; \
-		echo "  $$md"; python3 pages/build_course.py "$$md"; \
+	@bash -c 'shopt -s nullglob; for md in cursos/*/curso.md; do \
+		[ "$$md" = "cursos/template/curso.md" ] && continue; \
+		echo "  $$md"; python3 cursos/build_course.py "$$md"; \
 	done'
+
+pages: cursos
 
 demos:
 	@echo "▶  Regenerating demo pages…"
@@ -31,11 +33,11 @@ sync-site:
 	@mkdir -p $(SITE)
 	@cp index.html $(SITE)/
 	@rm -rf $(SITE)/assets && cp -r assets $(SITE)/assets
-	@rm -rf $(SITE)/pages && cp -r pages $(SITE)/pages
+	@rm -rf $(SITE)/cursos && cp -r cursos $(SITE)/cursos
 	@rm -rf $(SITE)/demos && cp -r demos $(SITE)/demos
 	@touch $(SITE)/.nojekyll
 
-build: pages demos
+build: cursos demos
 	@echo "▶  Building Cloud Academy…"
 	@cd apps/cloud_academy && npm ci --legacy-peer-deps && npm run build
 	@echo "▶  Building Lighting Black Holes…"
@@ -50,7 +52,7 @@ build: pages demos
 
 start:
 	@test -f $(SITE)/apps/cloud_academy/index.html || $(MAKE) build
-	@$(MAKE) pages demos sync-site
+	@$(MAKE) cursos demos sync-site
 	@echo "Starting server on http://$(HOST):$(PORT)"
 	@cd $(SITE) && nohup python3 -m http.server "$(PORT)" --bind "$(HOST)" >/dev/null 2>&1 &
 	@sleep 0.2
