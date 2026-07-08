@@ -146,9 +146,15 @@ function renderChart(series) {
 
 function getToken() {
   const params = new URLSearchParams(location.search);
-  const fromUrl = params.get("token");
+  const fromUrl = params.get("LOG_READ_TOKEN") || params.get("token");
   if (fromUrl) {
     sessionStorage.setItem(TOKEN_KEY, fromUrl);
+    if (params.has("LOG_READ_TOKEN") || params.has("token")) {
+      const clean = new URL(location.href);
+      clean.searchParams.delete("LOG_READ_TOKEN");
+      clean.searchParams.delete("token");
+      history.replaceState({}, "", clean.pathname + clean.search + clean.hash);
+    }
     return fromUrl;
   }
   return sessionStorage.getItem(TOKEN_KEY) || "";

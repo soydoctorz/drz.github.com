@@ -57,7 +57,7 @@ https://drz-academy.github.io/stats.html
 Pide el `LOG_READ_TOKEN` la primera vez (se guarda en `sessionStorage`). También puedes pasarlo en la URL:
 
 ```
-https://drz-academy.github.io/stats.html?token=TU_TOKEN
+https://drz-academy.github.io/stats.html?LOG_READ_TOKEN=TU_TOKEN
 ```
 
 La página **no está enlazada** desde el menú público (`noindex`).
