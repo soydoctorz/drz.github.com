@@ -69,6 +69,7 @@ jobs:
 
           # Archivo raíz
           cp index.html _site/
+          cp stats.html _site/
 
           # Logo, favicon y assets compartidos
           rm -rf _site/assets && cp -r assets _site/assets

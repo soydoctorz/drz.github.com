@@ -1,0 +1,275 @@
+const TOKEN_KEY = "drzAcademyStatsToken";
+const DEFAULT_LIMIT = 1000;
+
+const EVENT_LABELS = {
+  page_view: "Vista de página",
+  course_page_view: "Vista de curso",
+  demo_page_view: "Vista de demo",
+  app_click: "Click en app",
+  demo_click: "Click en demo (índice)",
+  course_click: "Click en curso (índice)",
+  course_enroll_click: "Inscribirse ahora",
+};
+
+function endpointFromMeta() {
+  const el = document.querySelector('meta[name="visitor-log-read-endpoint"]');
+  return String(el?.getAttribute("content") ?? "").trim();
+}
+
+function fmt(n) {
+  return Number(n || 0).toLocaleString("es-CO");
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function countBy(items, selector) {
+  const map = new Map();
+  for (const item of items) {
+    const key = selector(item);
+    if (!key) continue;
+    map.set(key, (map.get(key) ?? 0) + 1);
+  }
+  return [...map.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+function uniqueIps(logs) {
+  return new Set(logs.map((l) => l.ip).filter(Boolean)).size;
+}
+
+function eventLabel(type) {
+  return EVENT_LABELS[type] || type;
+}
+
+function targetLabel(log) {
+  const d = log.details || {};
+  return d.targetName || d.courseName || d.demoName || d.pageName || log.page || "—";
+}
+
+function renderRows(tbodyId, rows, valueFmt = fmt) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="2">Sin datos</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows
+    .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${valueFmt(v)}</td></tr>`)
+    .join("");
+}
+
+function dateKeyLocal(dateObj) {
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const d = String(dateObj.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function buildTimeSeries(logs, days) {
+  const safeDays = Math.max(1, Number(days) || 7);
+  const end = new Date();
+  end.setHours(0, 0, 0, 0);
+  const start = new Date(end);
+  start.setDate(start.getDate() - (safeDays - 1));
+  const byDay = new Map();
+
+  for (let i = 0; i < safeDays; i += 1) {
+    const dt = new Date(start);
+    dt.setDate(start.getDate() + i);
+    byDay.set(dateKeyLocal(dt), { label: dt.toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit" }), events: 0, ips: new Set() });
+  }
+
+  for (const log of logs) {
+    const raw = String(log.timestampServer || "");
+    const dt = new Date(raw);
+    if (Number.isNaN(dt.getTime())) continue;
+    const key = dateKeyLocal(dt);
+    const bucket = byDay.get(key);
+    if (!bucket) continue;
+    bucket.events += 1;
+    if (log.ip) bucket.ips.add(log.ip);
+  }
+
+  return [...byDay.values()].map((b) => ({
+    label: b.label,
+    events: b.events,
+    visitors: b.ips.size,
+  }));
+}
+
+function renderChart(series) {
+  const host = document.getElementById("stats-timeseries");
+  if (!host) return;
+  if (!series.length) {
+    host.innerHTML = '<p class="stats-muted">Sin datos en el rango.</p>';
+    return;
+  }
+
+  const width = 900;
+  const height = 260;
+  const padX = 36;
+  const padTop = 16;
+  const padBottom = 36;
+  const maxY = Math.max(1, ...series.map((r) => Math.max(r.events, r.visitors)));
+
+  function linePoints(selector) {
+    const n = series.length;
+    const plotW = width - padX * 2;
+    const plotH = height - padTop - padBottom;
+    return series
+      .map((row, idx) => {
+        const x = padX + (n === 1 ? plotW / 2 : (idx / (n - 1)) * plotW);
+        const val = selector(row);
+        const y = padTop + (1 - val / maxY) * plotH;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+  }
+
+  host.innerHTML = `
+    <svg class="stats-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Eventos por día">
+      <polyline fill="none" stroke="#F3D361" stroke-width="2.5" points="${linePoints((r) => r.events)}" />
+      <polyline fill="none" stroke="#0d7693" stroke-width="2.5" points="${linePoints((r) => r.visitors)}" />
+      ${series.map((row, idx) => {
+        const n = series.length;
+        const plotW = width - padX * 2;
+        const x = padX + (n === 1 ? plotW / 2 : (idx / (n - 1)) * plotW);
+        return `<text x="${x.toFixed(1)}" y="${height - 8}" text-anchor="middle" fill="#888" font-size="11">${escapeHtml(row.label)}</text>`;
+      }).join("")}
+    </svg>`;
+}
+
+function getToken() {
+  const params = new URLSearchParams(location.search);
+  const fromUrl = params.get("token");
+  if (fromUrl) {
+    sessionStorage.setItem(TOKEN_KEY, fromUrl);
+    return fromUrl;
+  }
+  return sessionStorage.getItem(TOKEN_KEY) || "";
+}
+
+async function fetchLogs(token) {
+  const base = endpointFromMeta();
+  if (!base) throw new Error("Falta meta visitor-log-read-endpoint");
+  const url = `${base}?token=${encodeURIComponent(token)}&limit=${DEFAULT_LIMIT}`;
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  const data = await res.json();
+  if (!res.ok || !data.ok) {
+    throw new Error(data.error || `HTTP ${res.status}`);
+  }
+  return data.logs || [];
+}
+
+function renderDashboard(logs) {
+  const enrollClicks = logs.filter((l) => l.eventType === "course_enroll_click");
+  const appClicks = logs.filter((l) => l.eventType === "app_click");
+  const demoClicks = logs.filter((l) => l.eventType === "demo_click" || l.eventType === "demo_page_view");
+  const courseViews = logs.filter((l) => l.eventType === "course_page_view" || l.eventType === "course_click");
+
+  const summary = document.getElementById("stats-summary");
+  if (summary) {
+    summary.innerHTML = [
+      ["Eventos totales", logs.length],
+      ["Visitantes únicos (IP)", uniqueIps(logs)],
+      ["Clicks en apps", appClicks.length],
+      ["Demos (clicks + vistas)", demoClicks.length],
+      ["Cursos (clicks + vistas)", courseViews.length],
+      ["Inscripciones", enrollClicks.length],
+    ]
+      .map(
+        ([k, v]) =>
+          `<div class="stats-card"><div class="stats-card__k">${escapeHtml(k)}</div><div class="stats-card__v">${fmt(v)}</div></div>`,
+      )
+      .join("");
+  }
+
+  renderRows(
+    "by-event",
+    countBy(logs, (l) => eventLabel(l.eventType)),
+  );
+  renderRows(
+    "by-app",
+    countBy(appClicks, (l) => targetLabel(l)),
+  );
+  renderRows(
+    "by-demo",
+    countBy(demoClicks, (l) => targetLabel(l)),
+  );
+  renderRows(
+    "by-course",
+    countBy(courseViews, (l) => targetLabel(l)),
+  );
+  renderRows(
+    "by-enroll",
+    countBy(enrollClicks, (l) => targetLabel(l)),
+  );
+  renderRows(
+    "by-page",
+    countBy(logs, (l) => l.page || "—"),
+  );
+  renderRows(
+    "by-country",
+    countBy(logs, (l) => l.country || "XX"),
+  );
+
+  const rangeDays = Number(document.querySelector(".stats-range-btn.active")?.dataset.rangeDays || 7);
+  renderChart(buildTimeSeries(logs, rangeDays));
+
+  const status = document.getElementById("stats-status");
+  if (status) {
+    const latest = logs[0]?.timestampServer;
+    status.textContent = latest
+      ? `${fmt(logs.length)} eventos cargados · último: ${new Date(latest).toLocaleString("es-CO")}`
+      : `${fmt(logs.length)} eventos cargados`;
+  }
+}
+
+let cachedLogs = [];
+
+async function loadLogs() {
+  const errEl = document.getElementById("stats-error");
+  const status = document.getElementById("stats-status");
+  if (errEl) errEl.hidden = true;
+
+  let token = getToken();
+  if (!token) {
+    token = prompt("Token de lectura (LOG_READ_TOKEN):") || "";
+    if (!token) {
+      if (status) status.textContent = "Sin token — no se pueden cargar los logs.";
+      return;
+    }
+    sessionStorage.setItem(TOKEN_KEY, token);
+  }
+
+  if (status) status.textContent = "Cargando…";
+  try {
+    cachedLogs = await fetchLogs(token);
+    renderDashboard(cachedLogs);
+  } catch (err) {
+    if (errEl) {
+      errEl.hidden = false;
+      errEl.textContent = err instanceof Error ? err.message : String(err);
+    }
+    if (status) status.textContent = "Error al cargar.";
+  }
+}
+
+function wireRangeButtons() {
+  document.querySelectorAll(".stats-range-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".stats-range-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderChart(buildTimeSeries(cachedLogs, Number(btn.dataset.rangeDays || 7)));
+    });
+  });
+}
+
+document.getElementById("stats-refresh")?.addEventListener("click", loadLogs);
+wireRangeButtons();
+loadLogs();

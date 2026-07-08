@@ -1,4 +1,4 @@
-.PHONY: help build cursos pages demos sync-site start stop
+.PHONY: help build cursos pages demos sync-site start stop worker-deploy
 
 PORT ?= 8000
 HOST ?= 127.0.0.1
@@ -13,6 +13,8 @@ help:
 	@echo "  make sync-site  - Copia index, assets y cursos/ a $(SITE)/"
 	@echo "  make start      - Arranca http://$(HOST):$(PORT) (actualiza cursos si hace falta)"
 	@echo "  make stop       - Detiene el servidor en el puerto $(PORT)"
+	@echo ""
+	@echo "  make worker-deploy - Despliega el Worker de analytics en Cloudflare"
 	@echo ""
 	@echo "  PORT=3000 make start   - Usar otro puerto"
 
@@ -32,6 +34,7 @@ demos:
 sync-site:
 	@mkdir -p $(SITE)
 	@cp index.html $(SITE)/
+	@cp stats.html $(SITE)/
 	@rm -rf $(SITE)/assets && cp -r assets $(SITE)/assets
 	@rm -rf $(SITE)/cursos && cp -r cursos $(SITE)/cursos
 	@rm -rf $(SITE)/demos && cp -r demos $(SITE)/demos
@@ -75,3 +78,7 @@ stop:
 	else \
 		echo "No process listening on $(PORT)."; \
 	fi
+
+worker-deploy:
+	@echo "▶  Deploying analytics worker…"
+	@cd analytics/worker && npx wrangler deploy

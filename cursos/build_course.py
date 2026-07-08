@@ -53,6 +53,7 @@ TEMPLATE_MD = CURSOS_DIR / "template" / "curso.md"
 COURSES_JSON= CURSOS_DIR / "courses.json"
 TEMPLATE_DIR= CURSOS_DIR / "template"
 SITE_URL    = "https://drz-academy.github.io"
+ANALYTICS_LOG_URL = "https://drz-academy-visitor-log.drz-academy.workers.dev/log"
 QR_CURSO    = "images/qr-curso.png"          # afiche → hoja del curso
 QR_INSCRIPCION = "images/qr-inscripcion.png"  # página → URL de inscripción
 OG_PREVIEW  = "images/og-preview.jpg"         # siempre generado desde imagen_header
@@ -376,10 +377,12 @@ def generate_og_images(course_dir: Path, meta: dict) -> None:
 def hotmart_top_block(meta: dict) -> str:
     """Banner de inscripción para cursos en Hotmart (arriba del contenido)."""
     url = meta.get("inscripcion_url", "#")
+    cid = escape_attr(meta.get("id", ""))
+    titulo = escape_attr(meta.get("titulo", ""))
     return f'''
     <div class="hotmart-banner">
       <p class="hotmart-banner-lead">Este curso se realiza en la plataforma <strong>Hotmart</strong>. En el siguiente enlace puedes adquirirlo:</p>
-      <a class="hotmart-btn" href="{url}" target="_blank" rel="noopener">Adquirir en Hotmart →</a>
+      <a class="hotmart-btn" href="{url}" target="_blank" rel="noopener" data-track="course_enroll_click" data-track-id="{cid}" data-track-name="{titulo}">Adquirir en Hotmart →</a>
     </div>'''
 
 
@@ -389,6 +392,8 @@ def cta_block(meta: dict) -> str:
     qr     = meta.get("imagen_qr", "")
     email  = meta.get("email_contacto", "soydoctorz@gmail.com")
     wa     = meta.get("whatsapp", "")
+    cid    = escape_attr(meta.get("id", ""))
+    titulo = escape_attr(meta.get("titulo", ""))
 
     qr_html = ""
     if qr:
@@ -404,7 +409,7 @@ def cta_block(meta: dict) -> str:
 
     return f'''
     <div class="enroll-section">
-      <a class="enroll-btn" href="{url}" target="_blank" rel="noopener">
+      <a class="enroll-btn" href="{url}" target="_blank" rel="noopener" data-track="course_enroll_click" data-track-id="{cid}" data-track-name="{titulo}">
         Inscribete ahora →
       </a>{qr_html}
       <div class="contact-links" style="margin-top:1.5rem;">
@@ -463,7 +468,8 @@ def head_meta(
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{escape_attr(full_title)}">
   <meta name="twitter:description" content="{escape_attr(tagline)}">
-  <meta name="twitter:image" content="{og_image}">"""
+  <meta name="twitter:image" content="{og_image}">
+  <meta name="visitor-log-endpoint" content="{ANALYTICS_LOG_URL}">"""
 
 
 def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
@@ -684,7 +690,7 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
     }}
   </style>
 </head>
-<body>
+<body data-track-page="course" data-track-id="{escape_attr(course_id)}" data-track-name="{escape_attr(titulo)}">
 
   <div class="page-header">
     <img src="{header_img}" alt="{titulo} – Dr. Z Academy" width="2048" height="952">
@@ -706,6 +712,7 @@ def render_html(meta: dict, sections: list[tuple[str, str]]) -> str:
     · <a href="mailto:{meta.get('email_contacto', 'soydoctorz@gmail.com')}">{meta.get('email_contacto', 'soydoctorz@gmail.com')}</a></p>
   </footer>
 
+  <script type="module" src="/assets/site-analytics.js"></script>
 </body>
 </html>
 """

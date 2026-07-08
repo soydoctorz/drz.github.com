@@ -178,6 +178,12 @@ Tras desplegar, si WhatsApp sigue mostrando la imagen vieja, borra la caché en 
 
 ---
 
+## Estadísticas de clicks
+
+El sitio registra interacciones (apps, demos, cursos, botón «Inscribete ahora») en un **Cloudflare Worker** con KV. Ver [`analytics/README.md`](../analytics/README.md) para desplegar el worker y abrir el panel en `/stats.html`.
+
+---
+
 ## Demos interactivos: modelo de archivos
 
 Los demos son simulaciones didácticas ligeras (HTML/CSS/JS) que viven en `demos/<id>/`. Comparten una plantilla de página y una hoja de estilos común; el widget interactivo suele venir de fuera (p. ej. exportado desde Gemini) y se pega tal cual en `content.html`.

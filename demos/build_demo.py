@@ -41,6 +41,7 @@ DEMOS_DIR = REPO_ROOT / "demos"
 TEMPLATE_DIR = DEMOS_DIR / "template"
 DEMOS_JSON = DEMOS_DIR / "demos.json"
 SITE_URL = "https://drz-academy.github.io"
+ANALYTICS_LOG_URL = "https://drz-academy-visitor-log.drz-academy.workers.dev/log"
 LOGO_QR = REPO_ROOT / "assets/DrZ-Logos/Dr_Z_Logo_Blanco_marquesina_fondo_transparente.png"
 QR_SIZE = 512
 LOGO_RATIO = 0.28
@@ -52,12 +53,13 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 {meta_tags}
+  <meta name="visitor-log-endpoint" content="{analytics_log_url}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/demos/demo.css">
 </head>
-<body>
+<body data-track-page="demo" data-track-id="{demo_id}" data-track-name="{demo_name_attr}">
 
   <nav class="topbar" aria-label="Navegación">
     <div class="topbar-left">
@@ -96,6 +98,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     · <a href="https://github.com/drz-academy/drz-academy.github.io" target="_blank" rel="noopener">GitHub</a>
   </footer>
 
+  <script type="module" src="/assets/site-analytics.js"></script>
 </body>
 </html>
 """
@@ -267,6 +270,9 @@ def build_demo(path: Path, *, no_qr: bool = False, no_json: bool = False) -> dic
 
     page = PAGE_TEMPLATE.format(
         meta_tags=head_meta(meta, page_url),
+        analytics_log_url=ANALYTICS_LOG_URL,
+        demo_id=escape_attr(demo_id),
+        demo_name_attr=escape_attr(meta.get("titulo", demo_id)),
         breadcrumb=escape_attr(meta.get("breadcrumb") or meta.get("titulo_destacado") or demo_id),
         categoria=escape_attr(meta.get("categoria", "Ciencia")),
         titulo_html=titulo_html(meta),

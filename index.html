@@ -22,6 +22,8 @@
   <meta name="twitter:title" content="Dr. Z Academy – Recursos y Aplicaciones">
   <meta name="twitter:description" content="Recursos, aplicaciones web, hojas de cursos y herramientas de Dr. Z Academy.">
   <meta name="twitter:image" content="https://drz-academy.github.io/assets/og-drz.png">
+  <meta name="visitor-log-endpoint" content="https://drz-academy-visitor-log.drz-academy.workers.dev/log">
+  <meta name="visitor-log-read-endpoint" content="https://drz-academy-visitor-log.drz-academy.workers.dev/logs">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -578,7 +580,7 @@
   </style>
 </head>
 
-<body>
+<body data-track-page="home">
 
   <!-- ── HEADER ───────────────────────────────────────────────── -->
   <header>
@@ -665,7 +667,7 @@
             <span class="tag">Next.js</span>
             <span class="tag">TypeScript</span>
           </div>
-          <a href="apps/cloud_academy/" class="app-card-link">
+          <a href="apps/cloud_academy/" class="app-card-link" data-track="app_click" data-track-id="cloud_academy" data-track-name="Cámara de Burbujas">
             Abrir aplicación
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -684,7 +686,7 @@
             <span class="tag">Next.js</span>
             <span class="tag">WebGL</span>
           </div>
-          <a href="apps/lighting-black-holes/" class="app-card-link">
+          <a href="apps/lighting-black-holes/" class="app-card-link" data-track="app_click" data-track-id="lighting-black-holes" data-track-name="Iluminando Agujeros Negros">
             Abrir aplicación
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -880,7 +882,7 @@
           c.sesiones   ? `<span class="dot">${c.sesiones} sesiones</span>` : '',
         ].filter(Boolean).join('');
         return `
-        <a class="course-card" href="${c.url}" rel="noopener">
+        <a class="course-card" href="${c.url}" rel="noopener" data-track="course_click" data-track-id="${c.id}" data-track-name="${c.titulo}">
           ${img}
           <div class="course-card-body">
             <h3>${c.titulo}</h3>
@@ -938,7 +940,7 @@
           <h3>${d.titulo}</h3>
           <p>${d.descripcion || ''}</p>
           <div class="app-card-tags">${tagHtml(d.etiquetas)}</div>
-          <a href="${d.url}" class="app-card-link">
+          <a href="${d.url}" class="app-card-link" data-track="demo_click" data-track-id="${d.id || ''}" data-track-name="${d.titulo}">
             Abrir demo
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -970,6 +972,8 @@
       });
     })();
   </script>
+
+  <script type="module" src="/assets/site-analytics.js"></script>
 
 </body>
 </html>
