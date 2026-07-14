@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python para el fin del mundo – Dr. Z Academy</title>
+  <meta name="description" content="Aprende Python desde cero con datos reales de asteroides y criterio científico">
+  <link rel="icon" href="https://drz-academy.github.io/assets/favicon.ico" sizes="any">
+  <link rel="icon" href="https://drz-academy.github.io/assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="https://drz-academy.github.io/assets/favicon-16.png" type="image/png" sizes="16x16">
+  <link rel="apple-touch-icon" href="https://drz-academy.github.io/assets/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dr. Z Academy">
+  <meta property="og:locale" content="es_CO">
+  <meta property="og:title" content="Python para el fin del mundo – Dr. Z Academy">
+  <meta property="og:description" content="Aprende Python desde cero con datos reales de asteroides y criterio científico">
+  <meta property="og:url" content="https://drz-academy.github.io/cursos/python-fin-del-mundo/">
+  <meta property="og:image" content="https://drz-academy.github.io/cursos/python-fin-del-mundo/images/og-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="320">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Python para el fin del mundo – Dr. Z Academy">
+  <meta name="twitter:description" content="Aprende Python desde cero con datos reales de asteroides y criterio científico">
+  <meta name="twitter:image" content="https://drz-academy.github.io/cursos/python-fin-del-mundo/images/og-preview.jpg">
+  <meta name="visitor-log-endpoint" content="https://drz-academy-visitor-log.drz-academy.workers.dev/log">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #F3D361;
+      --teal: #0d7693;
+      --link: #1155cc;
+      --text: #1a1a1a;
+      --text-light: #444;
+      --bg: #ffffff;
+      --bg-alt: #f8f9fa;
+      --border: #e0e0e0;
+      --gap: 2.5rem;
+      --width: 740px;
+      --r: 10px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Nunito', sans-serif; font-size: 1.0625rem; line-height: 1.8;
+    }
+    a { color: var(--link); } a:hover { text-decoration: underline; }
+
+    /* Header banner */
+    .page-header { width: 100%; line-height: 0; background: #000; }
+    .page-header img { width: 100%; height: auto; display: block; }
+
+    /* Breadcrumb */
+    .topbar {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1.5rem; display: flex; align-items: center;
+      gap: 0.5rem; font-size: 0.8rem; color: #888;
+    }
+    .topbar a { color: #555; text-decoration: none; }
+    .topbar a:hover { color: var(--teal); }
+    .topbar .sep::before { content: "›"; margin: 0 0.3rem; }
+
+    /* Content */
+    main { max-width: var(--width); margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    /* Section titles (Pacifico) */
+    h1.section-title, h2.section-title {
+      font-family: 'Pacifico', cursive; font-weight: 400;
+      font-size: clamp(1.6rem, 5vw, 2.25rem); line-height: 1.2;
+      color: var(--text); margin-top: var(--gap); margin-bottom: 1.25rem;
+    }
+    h1.section-title { margin-top: 0; }
+
+    /* Section body */
+    .section-body p {
+      font-family: 'Roboto', sans-serif; margin-bottom: 1.1rem;
+      text-align: justify; color: var(--text-light);
+    }
+    .section-body p:last-child { margin-bottom: 0; }
+    .section-body p strong, .section-body b { color: var(--text); font-weight: 700; }
+
+    /* Topics list (blockquote) */
+    .topics-list {
+      background: var(--bg-alt); border-left: 4px solid var(--teal);
+      border-radius: 0 var(--r) var(--r) 0; padding: 1.25rem 1.5rem; margin: 1.25rem 0;
+    }
+    .topics-list p {
+      color: #1a4fa8; font-size: 1rem; font-weight: 600;
+      text-align: center; margin: 0; line-height: 1.9;
+    }
+
+    /* Photo grid */
+    .photo-grid { display: grid; gap: 1rem; margin: 1.5rem 0; width: 100%; }
+    .photo-grid--single {
+      grid-template-columns: minmax(0, 400px);
+      justify-content: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .photo-grid--pair { grid-template-columns: 1fr 1fr; }
+    .photo-grid--many { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .photo-grid img { width: 100%; height: auto; border-radius: var(--r); display: block; object-fit: cover; }
+
+    /* Checklist */
+    ul.checklist { list-style: none; padding: 0; margin: 1rem 0; }
+    ul.checklist li {
+      font-family: 'Nunito', sans-serif; font-size: 1rem; color: var(--text-light);
+      padding: 0.6rem 0 0.6rem 2rem; position: relative;
+      border-bottom: 1px solid var(--border); line-height: 1.6;
+    }
+    ul.checklist li:last-child { border-bottom: none; }
+    ul.checklist li::before {
+      content: "●"; position: absolute; left: 0.4rem;
+      color: var(--gold); font-size: 0.55rem; top: 0.9rem;
+    }
+
+    /* Hotmart banner (arriba del contenido) */
+    .hotmart-banner {
+      background: linear-gradient(135deg, #fff8e6 0%, #fff3cd 100%);
+      border: 2px solid #f5a623;
+      border-radius: var(--r);
+      padding: 1.75rem 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .hotmart-banner-lead {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+    .hotmart-btn {
+      display: inline-block;
+      background: #f5a623;
+      color: #1a1a1a;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      padding: 0.75rem 2rem;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .hotmart-btn:hover { background: #e09410; text-decoration: none; color: #1a1a1a; }
+
+    /* CTA / Enroll */
+    .enroll-section {
+      background: var(--bg-alt); border: 2px solid var(--teal);
+      border-radius: var(--r); padding: 2rem; margin-top: var(--gap); text-align: center;
+    }
+    .enroll-section p { text-align: center; font-family: 'Nunito', sans-serif; font-size: 1.1rem; color: var(--text); margin-bottom: 1.25rem; }
+    .enroll-btn {
+      display: inline-block; background: var(--teal); color: #fff;
+      font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 800;
+      padding: 0.8rem 2.2rem; border-radius: 100px; text-decoration: none;
+      transition: background 0.2s; margin-bottom: 1.5rem;
+    }
+    .enroll-btn:hover { background: #0a5f77; text-decoration: none; color: #fff; }
+    .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .qr-wrap img { width: 140px; height: 140px; border: 1px solid var(--border); border-radius: var(--r); }
+    .qr-wrap span { font-size: 0.8rem; color: #888; }
+    .contact-links { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .contact-links a { color: var(--teal); font-weight: 700; font-size: 0.9rem; }
+
+    /* Closing */
+    .closing {
+      text-align: center; font-family: 'Nunito', sans-serif;
+      font-size: 1.5rem; font-weight: 800; color: var(--teal);
+      margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--border);
+    }
+
+    /* Footer */
+    footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 1.5rem; text-align: center; font-size: 0.8rem; color: #888; }
+    footer a { color: #555; }
+
+    /* Print */
+    @media print {
+      .topbar, .enroll-section, footer { display: none; }
+      body { font-size: 11pt; }
+      .section-body p { text-align: left; color: #000; }
+      h1.section-title, h2.section-title { color: #000; }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      main { padding: 2rem 1rem 4rem; }
+      .photo-grid--pair { grid-template-columns: 1fr; }
+      .enroll-section { padding: 1.25rem 1rem; }
+    }
+  </style>
+</head>
+<body data-track-page="course" data-track-id="python-fin-del-mundo" data-track-name="Python para el fin del mundo">
+
+  <div class="page-header">
+    <img src="images/header.png" alt="Python para el fin del mundo – Dr. Z Academy" width="2048" height="952">
+  </div>
+
+  <nav class="topbar" aria-label="Breadcrumb">
+    <a href="https://drz-academy.github.io/">Dr. Z Academy</a>
+    <span class="sep">Cursos</span>
+    <span class="sep" aria-current="page">Python para el fin del mundo</span>
+  </nav>
+
+  <main>
+    <h1 class="section-title">¿De qué va este curso?</h1>
+    <div class="section-body"><p>Inscríbete ya en este enlace: <a href="https://tinyurl.com/jzx4jyya">https://tinyurl.com/jzx4jyya</a></p>
+<p>Este es un curso práctico de Python aplicado a la astronomía que tiene por objetivo aprender a escribir código útil desde cero, teniendo como contexto el análisis de datos orbitales de asteroides con criterio científico.</p>
+<p>¡Nada de carreta, aquí vamos a estudiar con datos de verdad!</p>
+<p>En <strong>Python para el fin del mundo</strong> aprenderás a hablarle a la computadora para que realice tareas que serían imposibles o agotadoras para nosotros. Cuando aparezca el siguiente 3I/ATLAS no le creas a los posts de Instagram; simplemente abre tu notebook Colab, ingresa los datos y el programa construido por ti mismo en el curso te dirá, basándose en sus características físicas y orbitales, si llegó el momento de reunirnos con los dinosaurios.</p>
+<p>Usaremos a los asteroides como la excusa perfecta para aprender a programar y desarrollar un superpoder: en lugar de ser un espectador, te conviertes en quien procesa la información y entiende la naturaleza de los objetos que cruzan nuestro vecindario espacial.</p>
+<p>Este material es parte de una serie de cursos cortos en donde se enseña a programar con una aplicación específica a un tema astronómico o astrofísico. Esta serie hace parte del universo divulgativo de Dr. Z Academy llamado Cosmopedia.</p></div>
+
+    <h2 class="section-title">¿Puedes mencionar algunos temas?</h2>
+    <div class="section-body"><p>La verdad es que es un curso carnudo, que te va a dar todos los fundamentos para programar en Python sobre cualquier cosa, con énfasis, por supuesto, en los fascinantes asuntos astronómicos y astrofísicos.</p>
+<p>Empezamos desde lo básico con varias lecciones de supervivencia orientadas a que conozcas las capacidades y vericuetos del lenguaje. Vamos a manipular datos reales de bases de datos astronómicas como lo hacen los astrónomos profesionales, aprenderemos a entrenar modelos básicos de aprendizaje automático o <em>machine learning</em> para que tu programa distinga qué asteroides son de cuidado. También daremos una introducción a la programación orientada a objetos, construiremos gráficos interactivos e incluso construiremos una aplicación web tipo defensa planetaria.</p>
+<p>¡Es pura ingeniería de software aplicada a la astronomía!</p>
+<p>Serán 7 semanas y 36 lecciones que no vas a querer que lleguen a su fin.</p></div>
+
+    <h2 class="section-title">¿Dónde entra la inteligencia artificial?</h2>
+    <div class="section-body"><p>Entra por la puerta grande y por partida doble. Por un lado, vamos a usar la IA, como Gemini o ChatGPT, como nuestro copiloto de programación; esa ayuda extra que te sirve para cazar errores, resolver dudas del código y para que la escritura te fluya mucho más rápido. Es como tener a un experto sentado al lado mientras camellas.</p>
+<p>Pero lo más emocionante es que no solo la vamos a usar para programar, sino que vamos a entrenar nuestra propia IA. En el módulo de <em>machine learning</em> nos meteremos con modelos de verdad para que el programa aprenda a distinguir, entre miles de datos, cuáles asteroides son una amenaza real y cuáles son simples rocas pasando de largo.</p></div>
+
+    <h2 class="section-title">¿Qué necesito saber o tener para este curso?</h2>
+    <div class="section-body"><p>Lo primero es dejar de pensar que debes ser un duro en computación o un experto en el espacio; aquí arrancamos desde el puro "Quiubo parce" (versión paisa de "Hola Mundo"). Los cursos de la Dr. Z Academy están diseñados para que personas de todos los niveles, desde el más básico al más avanzado, disfruten aprendiendo.</p>
+<p>Lo único que realmente necesitas tener a la mano es una computadora con conexión a internet y un navegador web, porque todo lo vamos a hacer en la nube. Te pedimos eso sí que tengas una cuenta de Google (un Gmail cualquiera) para poder usar los notebooks de Colab.</p></div>
+
+    <h2 class="section-title">¿Cómo lo vamos a hacer?</h2>
+    <div class="section-body"><p>Este curso no es la tradicional clase en vivo donde te toca sentarte a una hora fija a ver a alguien hablar. Esta vez usaremos el modelo de Aula Invertida (<em>Flipped Classroom</em>). ¿Eso qué significa? Pues que cada semana te liberamos un bloque de contenidos y lecciones para que las consumas a tu ritmo, en el momento que mejor te quede y las veces que lo necesites. Son 36 lecciones en total, cortas y al grano, para que vayas desarrollando tus habilidades de programación en Python.</p>
+<p>El curso se realiza sobre la plataforma Google Classroom (debes crear una cuenta Gmail si no tienes una).</p></div>
+
+    <h2 class="section-title">¿Me dan algo al final?</h2>
+    <div class="section-body"><p>¡Pero claro que por supuesto que sí! Ni más faltaba que te fueras con las manos vacías después de semejante entrenamiento.</p>
+<p>Eso sí, la Dr. Z Academy está comprometida con la educación y divulgación científica de calidad y con rigor, de manera que para obtener tu certificado de participación debes completar las lecciones, presentar los quices de cada módulo y entregar las tareas asignadas. Pero no te preocupes, ¡esa es la parte divertida!</p></div>
+
+    <h2 class="section-title">¿De qué no me puedo olvidar?</h2>
+    <div class="section-body"><p>Estos son los datos que no puedes olvidar sobre el curso:</p>
+<ul class="checklist">
+<li>Este curso es para aprender <strong>Python</strong> usando a los <strong>asteroides</strong> como laboratorio científico.</li>
+<li>Aquí pasarás de lo básico a montar una <strong>web app funcional en la nube</strong>.</li>
+<li>Son <strong>36 lecciones</strong> que puedes ver a tu ritmo.</li>
+<li>Cada semana tenemos una <strong>sesión en vivo</strong> para resolver dudas y acompañarte con el código.</li>
+<li>Para obtener el certificado, debes completar lecciones, quices y tareas.</li>
+<li>No estamos todo el tiempo pegados del correo o WhatsApp, pero si escribes a <a href="mailto:SoyDoctorZ@gmail.com">SoyDoctorZ@gmail.com</a> o al número de atención <a href="https://wa.me/573002422052">WhatsApp</a> te responderemos lo más rápido que podamos.</li>
+</ul></div>
+
+    <h2 class="section-title">¿Quién es el profe?</h2>
+    <div class="section-body"><p><strong>Jhon Fredy Cardona Peña</strong> es <strong>Magíster en Astrofísica</strong> por la Universidad Internacional de Valencia (España), con estudios de maestría en Tecnologías de Información para el Negocio (MBIT), e <strong>ingeniero de sistemas con énfasis en software</strong>.</p>
+<p>Es socio fundador de la <strong>Dr. Z Academy</strong> y de la organización <strong>Astroñoños</strong>, que reúne a entusiastas de todo el país alrededor de la pasión por las ciencias y la tecnología.</p>
+<p>Ñoño de tiempo completo y, en este curso, traductor de los misterios del universo a herramientas prácticas para la comunidad.</p></div>
+
+
+    <div class="enroll-section">
+      <a class="enroll-btn" href="https://drz.academy/producto/python-fin-del-mundo/" target="_blank" rel="noopener" data-track="course_enroll_click" data-track-id="python-fin-del-mundo" data-track-name="Python para el fin del mundo">
+        Inscribete ahora →
+      </a>
+      <div class="qr-wrap">
+        <img src="images/qr-inscripcion.png" alt="Código QR para inscripción">
+        <span>Comparte el enlace de inscripción con este QR</span>
+      </div>
+      <div class="contact-links" style="margin-top:1.5rem;">
+        <a href="mailto:SoyDoctorZ@gmail.com">SoyDoctorZ@gmail.com</a>
+        <a href="https://wa.me/573002422052" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://drz.academy" target="_blank" rel="noopener">drz.academy</a>
+      </div>
+    </div>
+    <p class="closing">¡Nos vemos!</p>
+  </main>
+
+  <footer>
+    <p>© 2026 <a href="https://drz.academy" target="_blank" rel="noopener">Dr. Z Academy</a>
+    · Medellín, Colombia
+    · <a href="mailto:SoyDoctorZ@gmail.com">SoyDoctorZ@gmail.com</a></p>
+  </footer>
+
+  <script type="module" src="/assets/site-analytics.js"></script>
+</body>
+</html>

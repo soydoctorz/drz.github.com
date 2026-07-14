@@ -1,6 +1,23 @@
 {
   "cursos": [
     {
+      "id": "python-fin-del-mundo",
+      "titulo": "Python para el fin del mundo",
+      "tagline": "Aprende Python desde cero con datos reales de asteroides y criterio científico",
+      "descripcion": "Curso práctico para aprender Python aplicado a la astronomía: datos orbitales reales, visualización, machine learning y desarrollo de una web app.",
+      "url": "cursos/python-fin-del-mundo/",
+      "imagen": "cursos/python-fin-del-mundo/images/header.png",
+      "etiquetas": [
+        "Python",
+        "Astronomía",
+        "Asteroides",
+        "Machine Learning"
+      ],
+      "instructor": "Jhon Fredy Cardona Peña",
+      "sesiones": 36,
+      "activo": true
+    },
+    {
       "id": "cuantica-a-pie",
       "titulo": "Cuántica a Pie con Dr. Z",
       "tagline": "Teoría cuántica explicada en un lenguaje sencillo, para gente de a pie",
