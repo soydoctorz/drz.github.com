@@ -18,6 +18,7 @@ help:
 	@echo "  make notify-worker-deploy - Despliega el Worker de notificaciones en Cloudflare"
 	@echo "  make notify-import-csv CSV=contrib/contacts-test.csv - Importa suscriptores desde CSV a KV"
 	@echo "  make notify-list - Consulta la lista de suscriptores actualmente guardados"
+	@echo "  make notify-reset - Borra la lista de todos los suscriptores guardados"
 	@echo "  make notify-send-newsletter FILE=cursos/extraterrestres/newsletter.md - Envía un newsletter"
 	@echo ""
 	@echo "  PORT=3000 make start   - Usar otro puerto"
@@ -102,11 +103,15 @@ notify-import-csv:
 notify-list:
 	@python3 notify/client/course_notify_client.py list-emails
 
+notify-reset:
+	@echo "Borrando todos los suscriptores de la base de datos..."
+	@python3 notify/client/course_notify_client.py reset
+
 notify-send-newsletter:
 	@if [ -z "$(FILE)" ]; then \
 		echo "Debes indicar FILE. Ej: make notify-send-newsletter FILE=cursos/extraterrestres/newsletter.md"; \
 		exit 1; \
 	fi
-	@python3 notify/client/send_newsletter.py "$(FILE)" $(if $(SUBJECT),--subject "$(SUBJECT)",) $(if $(TEST_LIMIT),--test-limit "$(TEST_LIMIT)",) $(if $(DRY_RUN),--dry-run,)
+	@python3 notify/client/send_newsletter.py "$(FILE)" $(if $(SUBJECT),--subject "$(SUBJECT)",) $(if $(TEST_EMAILS),--test-emails "$(TEST_EMAILS)",) $(if $(DRY_RUN),--dry-run,)
 
 

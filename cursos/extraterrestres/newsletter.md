@@ -25,6 +25,7 @@ Por eso, te invitamos a participar en la **Master Class: Extraterrestres**. Un e
 - ¿Qué apariencia podrían tener y podríamos toparnos primero con inteligencia artificial o basura espacial extraterrestre?
 
 ### Detalles del curso
+- 🗓️ **Fechas:** Agosto 3 a 31 de 2026
 - 📅 **Días:** Lunes (4 sesiones en total)
 - ⏰ **Horario:** 6:30 p.m. a 8:30 p.m. (Hora de Colombia)
 - 📍 **Modalidad Híbrida:** 
@@ -51,4 +52,4 @@ Saludos,<br>
 **El equipo de Dr. Z Academy**<br>
 <img src="https://drz-academy.github.io/assets/DrZ-Logos/logo-firma.webp" alt="Dr. Z Academy" style="max-width: 180px; height: auto; margin-top: 15px;">
 <br>
-<a href="https://www.instagram.com/dr.zacademy/" style="color: #555; text-decoration: none; font-size: 14px;">📸 @dr.zacademy</a>
+<a href="https://www.instagram.com/dr.zacademy/" style="font-size: 14px;">Instagram: @dr.zacademy</a>

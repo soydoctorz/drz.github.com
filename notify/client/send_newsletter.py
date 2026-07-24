@@ -36,7 +36,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Enviar una newsletter desde un archivo Markdown.")
     parser.add_argument("markdown_file", type=Path, help="Ruta al archivo .md (ej. cursos/extraterrestres/newsletter.md)")
     parser.add_argument("--subject", required=False, help="Asunto del correo electrónico (sobrescribe el del markdown)")
-    parser.add_argument("--test-limit", type=int, default=0, help="Enviar solo a las primeras N personas (como test)")
+    parser.add_argument("--test-emails", type=str, default="", help="Lista de correos separados por coma (ej. a@a.com,b@b.com) para enviar una prueba")
     parser.add_argument("--dry-run", action="store_true", help="Solo muestra a quiénes se enviaría, no envía nada")
 
     args = parser.parse_args()
@@ -81,9 +81,17 @@ def main() -> int:
         print("No hay suscriptores confirmados.", file=sys.stderr)
         return 0
 
-    if args.test_limit > 0:
-        subscribers = subscribers[:args.test_limit]
-        print(f"MODO TEST: Limitado a los primeros {len(subscribers)} suscriptores.")
+    if args.test_emails:
+        test_emails_list = [e.strip() for e in args.test_emails.split(",") if e.strip()]
+        if test_emails_list:
+            subs_map = {s.get("email"): s for s in subscribers}
+            subscribers = []
+            for e in test_emails_list:
+                if e in subs_map:
+                    subscribers.append(subs_map[e])
+                else:
+                    subscribers.append({"email": e, "unsubscribeToken": ""})
+            print(f"MODO TEST: Enviar prueba solo a: {', '.join(test_emails_list)}.")
 
     emails = [str(s.get("email") or "") for s in subscribers if s.get("email")]
     

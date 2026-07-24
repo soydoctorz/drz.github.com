@@ -97,6 +97,11 @@ def dedupe_subscribers() -> dict:
     return api_request("POST", "/admin/dedupe", body={}, token=token)
 
 
+def reset_subscribers() -> dict:
+    token = load_token()
+    return api_request("POST", "/admin/reset", body={}, token=token)
+
+
 def unsubscribe_subscriber(email: str) -> dict:
     token = load_token()
     return api_request("POST", "/admin/unsubscribe", body={"email": email}, token=token)
@@ -108,7 +113,7 @@ def subscribe_email(email: str) -> dict:
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("Uso: course_notify_client.py seed|list|list-emails|subscribe|unsubscribe|dedupe EMAIL", file=sys.stderr)
+        print("Uso: course_notify_client.py seed|list|list-emails|subscribe|unsubscribe|dedupe|reset EMAIL", file=sys.stderr)
         return 1
     cmd = sys.argv[1]
     if cmd == "seed":
@@ -127,6 +132,9 @@ def main() -> int:
         return 0
     if cmd == "dedupe":
         print(json.dumps(dedupe_subscribers(), indent=2, ensure_ascii=False))
+        return 0
+    if cmd == "reset":
+        print(json.dumps(reset_subscribers(), indent=2, ensure_ascii=False))
         return 0
     if cmd == "unsubscribe":
         if len(sys.argv) < 3:

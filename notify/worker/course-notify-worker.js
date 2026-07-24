@@ -9,6 +9,7 @@
  * POST /admin/dedupe       Authorization: Bearer NOTIFY_TOKEN — limpia duplicados en KV
  * POST /admin/unsubscribe  Authorization: Bearer NOTIFY_TOKEN — { email }
  * GET  /admin/subscribers  Authorization: Bearer NOTIFY_TOKEN
+ * POST /admin/reset        Authorization: Bearer NOTIFY_TOKEN — borra todos los suscriptores
  */
 
 const CORS = {
@@ -362,6 +363,21 @@ async function handleListSubscribers(request, env) {
   });
 }
 
+async function handleAdminReset(request, env) {
+  const auth = requireNotifyToken(request, env);
+  if (!auth.ok) return auth.response;
+
+  const keys = await listSubscriberKeys(env.DRZ_NOTIFY);
+  let removed = 0;
+  for (const k of keys) {
+    await env.DRZ_NOTIFY.delete(k.name);
+    removed++;
+  }
+  await env.DRZ_NOTIFY.put(SUBSCRIBER_COUNT_KEY, "0");
+  
+  return json({ ok: true, removed });
+}
+
 async function handleNotify(request, env) {
   const auth = requireNotifyToken(request, env);
   if (!auth.ok) return auth.response;
@@ -417,6 +433,9 @@ export default {
       }
       if (request.method === "GET" && url.pathname === "/admin/subscribers") {
         return handleListSubscribers(request, env);
+      }
+      if (request.method === "POST" && url.pathname === "/admin/reset") {
+        return handleAdminReset(request, env);
       }
       if (request.method === "POST" && url.pathname === "/notify") {
         return handleNotify(request, env);

@@ -222,8 +222,8 @@ make notify-list
 El script convierte un archivo Markdown a HTML compatible con correo electrónico, agregando en el pie de página un enlace para cancelar la suscripción.
 
 ```bash
-# Prueba enviando solo a los primeros 2 suscriptores de la lista
-make notify-send-newsletter FILE=cursos/extraterrestres/newsletter.md SUBJECT="🛸 Nuevo Curso" TEST_LIMIT=2
+# Prueba enviando solo a una lista específica de correos separados por comas
+make notify-send-newsletter FILE=cursos/extraterrestres/newsletter.md TEST_EMAILS=tucorreo@gmail.com,otro@gmail.com
 
 # Envío completo a toda la lista
 make notify-send-newsletter FILE=cursos/extraterrestres/newsletter.md SUBJECT="🛸 Nuevo Curso"
